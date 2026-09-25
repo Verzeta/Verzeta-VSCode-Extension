@@ -1,0 +1,1671 @@
+/* SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com> */
+/* SPDX-License-Identifier: LGPL-3.0-or-later */
+
+/*
+ * Home tab styling — mirrors Android HomeScreen visual hierarchy
+ * (hero card + other hosts + recent + footer). Uses VS Code theme
+ * variables for surfaces and the Verzeta brand orange (#CD6700) for
+ * the connected accent so the hero reads as branded without
+ * fighting the user's chosen VS Code theme.
+ */
+
+.verzeta-home {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* `verzeta-home__brand` + `verzeta-home__brandname` rules were
+ * dropped — the brand row now lives in AppShellHeader (single
+ * brand for the whole shell) and the per-tab header is the new
+ * `verzeta-tabheader` defined in tabs.css. */
+
+.verzeta-home__scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* -------------------------------------------------------------- */
+/* Hero card — connected / pending / idle states                  */
+/* -------------------------------------------------------------- */
+
+/* The hero card sits on the Home tab next to the blue "Open chat"
+ * button. Earlier revisions used `editor-inactiveSelectionBackground`
+ * which renders as a warm brown/orange tint on most dark themes,
+ * clashing with the blue accent. The card now uses VS Code's
+ * neutral widget-background token (the same colour Outline /
+ * Suggestion / QuickPick widgets use), then layers a SUBTLE accent
+ * tint per state. The accent is sourced from `--vscode-focusBorder`
+ * (which is theme-aware and tracks the primary accent — blue on
+ * the default Dark+, but the user's chosen accent on custom themes)
+ * so the hero always coordinates with the rest of the chrome
+ * rather than clashing with it.
+ */
+
+.verzeta-hcard {
+    border-radius: 12px;
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(
+        --vscode-editorWidget-background,
+        var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.04))
+    );
+    border: 1px solid var(--vscode-widget-border, var(--vscode-editorWidget-border, transparent));
+}
+
+.verzeta-hcard--connected {
+    background:
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--vscode-focusBorder) 14%, transparent),
+            transparent 70%
+        ),
+        var(
+            --vscode-editorWidget-background,
+            var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.04))
+        );
+    border-color: color-mix(in srgb, var(--vscode-focusBorder) 40%, transparent);
+}
+
+.verzeta-hcard--pending {
+    background:
+        linear-gradient(135deg, rgba(204, 167, 0, 0.14), transparent 70%),
+        var(
+            --vscode-editorWidget-background,
+            var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.04))
+        );
+    border-color: rgba(204, 167, 0, 0.32);
+}
+
+.verzeta-hcard--idle,
+.verzeta-hcard--first-run {
+    background: var(
+        --vscode-editorWidget-background,
+        var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.04))
+    );
+}
+
+.verzeta-hcard__statusrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-hcard__statusdot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    /* Default status dot follows the active accent — matches the
+     * primary button next to it instead of clashing with it. */
+    background: var(--vscode-charts-green, #3fb950);
+    flex: 0 0 auto;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--vscode-charts-green, #3fb950) 30%, transparent);
+}
+
+.verzeta-hcard__statusdot--idle {
+    background: var(--vscode-descriptionForeground);
+    box-shadow: none;
+}
+
+.verzeta-hcard--pending .verzeta-hcard__statusdot {
+    background: var(--vscode-charts-yellow, #cca700);
+    box-shadow: 0 0 0 2px rgba(204, 167, 0, 0.22);
+}
+
+.verzeta-hcard__statuslabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--vscode-foreground);
+    flex: 0 0 auto;
+}
+
+.verzeta-hcard__pill {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex: 0 0 auto;
+    font-weight: 600;
+}
+.verzeta-hcard__pill--connected {
+    background: #2ea043;
+    color: #ffffff;
+}
+.verzeta-hcard__pill--connecting,
+.verzeta-hcard__pill--authenticating,
+.verzeta-hcard__pill--reconnecting {
+    background: #cca700;
+    color: #000000;
+}
+.verzeta-hcard__pill--unauthorized,
+.verzeta-hcard__pill--error {
+    background: #d33;
+    color: #ffffff;
+}
+
+.verzeta-hcard__latency {
+    font-size: 10px;
+    color: var(--vscode-descriptionForeground);
+    font-family: var(--vscode-editor-font-family, monospace);
+    flex: 0 0 auto;
+}
+
+.verzeta-hcard__name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-hcard__url {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-family: var(--vscode-editor-font-family, monospace);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-hcard__detail {
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.45;
+    margin-top: 4px;
+}
+
+.verzeta-hcard__detail code {
+    font-family: var(--vscode-editor-font-family, monospace);
+    background: var(--vscode-textCodeBlock-background, var(--vscode-textBlockQuote-background));
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.92em;
+}
+
+.verzeta-hcard__actions {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* -------------------------------------------------------------- */
+/* Buttons — primary / tonal / outline / danger                   */
+/* -------------------------------------------------------------- */
+
+.verzeta-btn {
+    appearance: none;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    border-radius: 4px;
+    padding: 6px 14px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.verzeta-btn > svg {
+    flex: 0 0 auto;
+}
+
+.verzeta-btn--primary {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+.verzeta-btn--primary:hover:not(:disabled) {
+    background: var(--vscode-button-hoverBackground);
+}
+.verzeta-btn--primary:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.verzeta-btn--tonal {
+    background: var(
+        --vscode-button-secondaryBackground,
+        var(--vscode-editor-inactiveSelectionBackground)
+    );
+    color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+}
+.verzeta-btn--tonal:hover:not(:disabled) {
+    background: var(--vscode-button-secondaryHoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-btn--outline {
+    background: transparent;
+    color: var(--vscode-foreground);
+    border-color: var(--vscode-widget-border, var(--vscode-input-border, transparent));
+}
+.verzeta-btn--outline:hover:not(:disabled) {
+    background: var(--vscode-list-hoverBackground);
+}
+.verzeta-btn--outline:disabled {
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+
+.verzeta-btn--danger {
+    background: var(--vscode-errorForeground, #f48771);
+    color: var(--vscode-button-foreground);
+}
+.verzeta-btn--danger:hover {
+    filter: brightness(1.1);
+}
+
+/* -------------------------------------------------------------- */
+/* Section heading reused across Home + Settings                  */
+/* -------------------------------------------------------------- */
+
+.verzeta-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.verzeta-section__heading {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--vscode-descriptionForeground);
+    padding: 4px 4px 0;
+}
+
+/* -------------------------------------------------------------- */
+/* Other hosts list                                               */
+/* -------------------------------------------------------------- */
+
+.verzeta-otherhosts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-otherhost {
+    list-style: none;
+}
+
+.verzeta-otherhost__button {
+    width: 100%;
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 6px;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    padding: 8px 10px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.verzeta-otherhost__button:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+.verzeta-otherhost__button:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+}
+
+.verzeta-otherhost__icon {
+    font-size: 16px;
+    flex: 0 0 auto;
+}
+
+.verzeta-otherhost__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.verzeta-otherhost__name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-otherhost__url {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-family: var(--vscode-editor-font-family, monospace);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-otherhost__state {
+    flex: 0 0 auto;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.verzeta-otherhost__state--connected {
+    background: #2ea043;
+    color: #ffffff;
+}
+.verzeta-otherhost__state--unauthorized,
+.verzeta-otherhost__state--error {
+    background: #d33;
+    color: #ffffff;
+}
+.verzeta-otherhost__state--connecting,
+.verzeta-otherhost__state--authenticating,
+.verzeta-otherhost__state--reconnecting {
+    background: #cca700;
+    color: #000000;
+}
+
+/* -------------------------------------------------------------- */
+/* Recent conversations (Android RECENT · host-name section)      */
+/* -------------------------------------------------------------- */
+
+.verzeta-recent {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.verzeta-recent__heading {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--vscode-descriptionForeground);
+    padding: 4px 4px 0;
+}
+
+.verzeta-recent__empty {
+    margin: 0;
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    line-height: 1.45;
+    padding: 0 4px;
+}
+
+.verzeta-recent__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-recent__item {
+    list-style: none;
+}
+
+.verzeta-recent__button {
+    width: 100%;
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--vscode-foreground);
+    text-align: left;
+    cursor: pointer;
+    padding: 8px 8px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    line-height: 1.3;
+}
+
+.verzeta-recent__icon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--vscode-editorWidget-background, rgba(255, 255, 255, 0.04));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-recent__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-recent__button:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-recent__button:focus-visible {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+    background: var(--vscode-list-focusBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-recent__title {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-recent__preview {
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-recent__meta {
+    color: var(--vscode-descriptionForeground);
+    font-size: 11px;
+}
+
+/* -------------------------------------------------------------- */
+/* Footer                                                         */
+/* -------------------------------------------------------------- */
+
+.verzeta-homefooter {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+    background: var(--vscode-sideBar-background);
+    padding: 8px 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-homefooter__status {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-homefooter__actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.verzeta-homefooter__confirm {
+    display: flex;
+    gap: 6px;
+}
+
+/* `verzeta-homefooter__count` + `verzeta-homefooter__manage` rules
+ * were dropped — paired-devices count and the Manage devices link
+ * moved to the Settings tab so the Home footer stays narrow.
+ * Settings already exposes per-device Revoke + a Revoked devices
+ * drill-down. */
+
+/* ================================================================== */
+/* About / Help sub-page surfaces                                     */
+/* ================================================================== */
+
+.verzeta-about__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+}
+
+.verzeta-about__name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.verzeta-about__tagline {
+    margin: 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    max-width: 480px;
+}
+
+.verzeta-about__version {
+    margin: 0;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-family: var(--vscode-editor-font-family, monospace);
+}
+
+.verzeta-about__section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 16px;
+}
+
+.verzeta-about__label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-about__row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 6px;
+}
+
+.verzeta-about__row--button {
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    appearance: none;
+}
+
+.verzeta-about__row--button:hover {
+    background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.04));
+}
+
+.verzeta-about__rowTitle {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.verzeta-about__rowSubtitle {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.4;
+}
+
+.verzeta-help__topic {
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+
+.verzeta-help__topicTitle {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.verzeta-help__topicBody {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-prooms__hint {
+    margin: 0 16px 12px;
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.5;
+}
+
+/* ================================================================== */
+/* Hero card extras — Live pill + icon-button alignment               */
+/* ================================================================== */
+
+.verzeta-hcard__livepill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(46, 160, 67, 0.18);
+    color: #2ea043;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.verzeta-hcard__livepill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2ea043;
+    box-shadow: 0 0 0 2px rgba(46, 160, 67, 0.32);
+}
+
+.verzeta-hcard__actions .verzeta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ================================================================== */
+/* ProjectRoomsCard — purple entry to multi-agent rooms.              */
+/* ================================================================== */
+
+.verzeta-projcard {
+    appearance: none;
+    background: linear-gradient(135deg, rgba(125, 91, 196, 0.28) 0%, rgba(125, 91, 196, 0.12) 100%);
+    border: 1px solid rgba(125, 91, 196, 0.45);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.verzeta-projcard:hover {
+    background: linear-gradient(135deg, rgba(125, 91, 196, 0.38) 0%, rgba(125, 91, 196, 0.18) 100%);
+}
+
+.verzeta-projcard:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
+}
+
+.verzeta-projcard__icon {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(125, 91, 196, 0.32);
+    color: #c4afef;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-projcard__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-projcard__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-projcard__detail {
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-projcard__chevron {
+    flex: 0 0 14px;
+    width: 14px;
+    height: 14px;
+    color: var(--vscode-descriptionForeground);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ================================================================== */
+/* RECENT · HOSTNAME section header — Android small-caps style.       */
+/* ================================================================== */
+
+.verzeta-recent__heading {
+    margin: 0;
+    padding: 0 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-recent__heading-host {
+    color: var(--vscode-foreground);
+    letter-spacing: 0.06em;
+    position: relative;
+    padding-left: 12px;
+}
+
+.verzeta-recent__heading-host::before {
+    content: '·';
+    position: absolute;
+    left: 2px;
+    top: 0;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* ================================================================== */
+/* ProjectRoomsLanding — full-page overlay over Home / Chat / Settings */
+/* ================================================================== */
+
+.verzeta-prooms-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--vscode-editor-background);
+    z-index: 920;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.verzeta-prooms__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--vscode-widget-border, transparent);
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+}
+
+.verzeta-prooms__back {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    border-radius: 8px;
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.verzeta-prooms__back:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-prooms__back:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+
+.verzeta-prooms__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-prooms__crumb {
+    padding: 6px 14px 4px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.verzeta-prooms__scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px 14px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.verzeta-prooms__hero {
+    background: linear-gradient(135deg, rgba(125, 91, 196, 0.28) 0%, rgba(125, 91, 196, 0.1) 100%);
+    border: 1px solid rgba(125, 91, 196, 0.45);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.verzeta-prooms__heroTitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-prooms__heroDetail {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-prooms__heroActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.verzeta-prooms__heroActions .verzeta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.verzeta-prooms__sectionLabel {
+    margin: 0 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.verzeta-prooms__sectionLabel-host {
+    color: var(--vscode-foreground);
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    gap: 4px;
+}
+
+.verzeta-prooms__sectionLabel-count {
+    margin-left: 4px;
+    padding: 0 6px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+}
+
+.verzeta-prooms__rooms {
+    display: flex;
+    flex-direction: column;
+}
+
+.verzeta-prooms__empty {
+    margin: 0;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-prooms__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.verzeta-prooms__cardWrap {
+    position: relative;
+    display: flex;
+}
+
+.verzeta-prooms__card {
+    flex: 1 1 auto;
+    min-width: 0;
+    appearance: none;
+    text-align: left;
+    background: var(--vscode-editorWidget-background, var(--vscode-list-hoverBackground));
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 10px;
+    padding: 12px;
+    color: var(--vscode-foreground);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+}
+
+.verzeta-prooms__card:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+    border-color: color-mix(in srgb, var(--vscode-focusBorder) 40%, transparent);
+}
+
+.verzeta-prooms__cardEdit {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    appearance: none;
+    background: transparent;
+    color: var(--vscode-descriptionForeground);
+    border: 1px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-prooms__cardEdit:hover {
+    background: var(--vscode-toolbar-hoverBackground, rgba(255, 255, 255, 0.06));
+    color: var(--vscode-foreground);
+}
+
+.verzeta-prooms__card:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+
+.verzeta-prooms__cardIcon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(125, 91, 196, 0.32);
+    color: #c4afef;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-prooms__cardBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-prooms__cardName {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.verzeta-prooms__cardMeta {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-prooms__footer {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--vscode-list-hoverBackground);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* ================================================================== */
+/* ProjectRoomsLanding · Templates section                             */
+/* ================================================================== */
+
+.verzeta-prooms__templates {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.verzeta-prooms__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.verzeta-prooms__filter {
+    appearance: none;
+    background: var(--vscode-list-hoverBackground);
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+}
+
+.verzeta-prooms__filter:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-prooms__filter--active {
+    background: rgba(125, 91, 196, 0.32);
+    border-color: rgba(125, 91, 196, 0.55);
+    color: #c4afef;
+}
+
+.verzeta-prooms__tplGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.verzeta-tplcard {
+    appearance: none;
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 12px;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    color: var(--vscode-foreground);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+}
+
+.verzeta-tplcard:hover {
+    border-color: rgba(125, 91, 196, 0.55);
+    transform: translateY(-1px);
+    transition: transform 100ms ease;
+}
+
+.verzeta-tplcard:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
+}
+
+.verzeta-tplcard__banner {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    color: #ffffff;
+}
+
+.verzeta-tplcard__tag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.32);
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.verzeta-tplcard__glyph {
+    font-size: 28px;
+    line-height: 1;
+    opacity: 0.85;
+}
+
+.verzeta-tplcard__body {
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-tplcard__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-tplcard__scenario {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-tplcard__desc {
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.verzeta-tplcard__bannerBtn {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.verzeta-tplcard__bannerBtn:hover .verzeta-tplcard__title {
+    color: var(--vscode-textLink-foreground, var(--vscode-foreground));
+}
+
+.verzeta-tplcard__actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 12px 12px;
+}
+
+.verzeta-prooms__browseAll {
+    appearance: none;
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--vscode-button-border, var(--vscode-widget-border, transparent));
+    color: var(--vscode-button-foreground, var(--vscode-foreground));
+    font-family: inherit;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.verzeta-prooms__browseAll:hover {
+    background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.04));
+}
+
+.verzeta-prooms__browseAll:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.verzeta-library__searchRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+}
+
+.verzeta-library__search {
+    flex: 1 1 auto;
+    appearance: none;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+}
+
+.verzeta-library__search:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-library__count {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    flex: 0 0 auto;
+}
+
+.verzeta-libcard {
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.verzeta-libcard__body {
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-libcard__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.verzeta-libcard__badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(125, 91, 196, 0.18);
+    color: var(--vscode-foreground);
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.verzeta-libcard__badge--builtin {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-libcard__actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.verzeta-libcard__btn {
+    appearance: none;
+    background: var(--vscode-button-secondaryBackground, transparent);
+    color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+    border: 1px solid var(--vscode-button-border, var(--vscode-widget-border, transparent));
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.verzeta-libcard__btn:hover {
+    background: var(--vscode-button-secondaryHoverBackground, rgba(255, 255, 255, 0.06));
+}
+
+.verzeta-libcard__btn--primary {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border-color: var(--vscode-button-border, transparent);
+}
+
+.verzeta-libcard__btn--primary:hover {
+    background: var(--vscode-button-hoverBackground, var(--vscode-button-background));
+}
+
+.verzeta-libcard__btn--danger {
+    color: var(--vscode-errorForeground, #f48771);
+}
+
+.verzeta-tpldetail {
+    background: var(--vscode-editor-background);
+    color: var(--vscode-foreground);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    width: min(640px, 100vw - 32px);
+    max-height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.verzeta-tpldetail__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--vscode-widget-border, transparent);
+}
+
+.verzeta-tpldetail__body {
+    padding: 12px 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.verzeta-tpldetail__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.verzeta-tpldetail__chip {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(125, 91, 196, 0.16);
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+.verzeta-tpldetail__section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-tpldetail__label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--vscode-descriptionForeground);
+    margin: 0;
+}
+
+.verzeta-tpldetail__body-text {
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.verzeta-tpldetail__roster {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-tpldetail__rosterRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.verzeta-tpldetail__rosterAlias {
+    font-weight: 600;
+}
+
+.verzeta-tpldetail__rosterAgent {
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-tpldetail__rosterModel {
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 1px 6px;
+    border-radius: 999px;
+}
+
+/* ================================================================== */
+/* Quick Start (template -> project) sheet                            */
+/* ================================================================== */
+
+.verzeta-qs__panel {
+    background: var(--vscode-editorWidget-background, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 12px;
+    margin: 0 16px 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.verzeta-qs__label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+    margin-top: 4px;
+}
+
+.verzeta-qs__banner {
+    height: 80px;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    color: #ffffff;
+}
+
+.verzeta-qs__teamHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.verzeta-qs__teamTitle {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.verzeta-qs__teamCount {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-qs__teamHint {
+    margin: 0;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.4;
+}
+
+.verzeta-qs__memberList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-qs__memberRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 6px;
+}
+
+.verzeta-qs__memberAvatar {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(125, 91, 196, 0.32);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.verzeta-qs__memberBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-qs__memberAlias {
+    appearance: none;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground, var(--vscode-foreground));
+    border: 1px solid var(--vscode-input-border, var(--vscode-widget-border, transparent));
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.verzeta-qs__memberAlias:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-qs__memberAlias:hover {
+    border-color: color-mix(in srgb, var(--vscode-focusBorder) 40%, transparent);
+}
+
+.verzeta-qs__memberOverride {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-style: italic;
+}
+
+.verzeta-qs__configBtn {
+    appearance: none;
+    background: transparent;
+    color: var(--vscode-descriptionForeground);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 5px 7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-qs__configBtn:hover {
+    background: var(--vscode-list-hoverBackground);
+    color: var(--vscode-foreground);
+}
+
+.verzeta-qs__configBtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-qs__saveTemplateBtn {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.verzeta-qs__memberAgent {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-qs__coordBtn {
+    appearance: none;
+    background: transparent;
+    color: var(--vscode-descriptionForeground);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.verzeta-qs__coordBtn--active {
+    color: #ffcf6b;
+    border-color: rgba(255, 207, 107, 0.6);
+}
+
+.verzeta-qs__removeBtn {
+    appearance: none;
+    background: transparent;
+    color: var(--vscode-errorForeground, #f48771);
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.verzeta-qs__footer {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--vscode-widget-border, transparent);
+    padding: 12px 16px;
+    background: var(--vscode-sideBar-background);
+}
+
+.verzeta-qs__footerRow {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.verzeta-qs__error {
+    margin: 0 0 8px;
+    font-size: 11px;
+    color: var(--vscode-errorForeground, #f48771);
+}
+
+.verzeta-qs__pickRow {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 6px;
+    padding: 8px 10px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+}
+
+.verzeta-qs__pickRow:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-qs__pickName {
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.verzeta-qs__pickDesc {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}

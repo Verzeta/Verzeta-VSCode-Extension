@@ -1,0 +1,32 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Verzeta VS Code Extension
+Upstream-Contact: Aditya Mehra <aix.m@outlook.com>
+Source: https://verzeta.com
+
+Files: resources/*
+Copyright: 2026 Aditya Mehra <aix.m@outlook.com>
+License: LGPL-3.0-or-later
+
+Files: assets/icons/* assets/screenshots/*
+Copyright: 2026 Aditya Mehra <aix.m@outlook.com>
+License: LGPL-3.0-or-later
+
+Files: .nvmrc .npmrc .editorconfig .gitattributes .gitignore .prettierrc .prettierignore
+Copyright: 2026 Aditya Mehra <aix.m@outlook.com>
+License: LGPL-3.0-or-later
+
+Files: package.json package-lock.json
+Copyright: 2026 Aditya Mehra <aix.m@outlook.com>
+License: LGPL-3.0-or-later
+
+Files: .vscode/*
+Copyright: 2026 Aditya Mehra <aix.m@outlook.com>
+License: LGPL-3.0-or-later
+
+Files: tsconfig.json tsconfig.tests.json webview-ui/tsconfig.json
+Copyright: 2026 Aditya Mehra <aix.m@outlook.com>
+License: LGPL-3.0-or-later
+
+Files: webview-ui/src/assets/verzeta-studio.svg
+Copyright: 2026 Aditya Mehra <aix.m@outlook.com>
+License: LGPL-3.0-or-later

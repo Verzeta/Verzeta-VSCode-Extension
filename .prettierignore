@@ -1,0 +1,4 @@
+
+# Release pipeline tooling (shell/python; not prettier-formatted)
+ci/
+VERSION

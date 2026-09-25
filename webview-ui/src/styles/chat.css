@@ -1,0 +1,3958 @@
+/* SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com> */
+/* SPDX-License-Identifier: LGPL-3.0-or-later */
+
+/*
+ * Chat tab styling (L21 + L24 + L27).
+ *
+ * Single-pane navigation matching the Android Compact-mode phone
+ * layout. When no conversation is active the rail fills the tab;
+ * when one is active the detail surface (header + timeline +
+ * composer) replaces it. The header carries a back arrow that
+ * returns to the rail. Side-by-side mode is intentionally NOT
+ * supported here — the VS Code sidebar is too narrow for it to
+ * read well; a future commit may add a >900 px breakpoint for the
+ * detached-editor case.
+ */
+
+.verzeta-chat {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.verzeta-chatnav {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--vscode-sideBar-background);
+    overflow: hidden;
+    position: relative;
+}
+
+.verzeta-chat__detail {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* -------------------------------------------------------------- */
+/* Search field                                                   */
+/* -------------------------------------------------------------- */
+
+.verzeta-search {
+    padding: 8px 8px 6px;
+    flex: 0 0 auto;
+}
+
+.verzeta-search__input {
+    width: 100%;
+    appearance: none;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 2px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    line-height: 1.3;
+    box-sizing: border-box;
+}
+
+.verzeta-search__input:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-search__input::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+}
+
+/* -------------------------------------------------------------- */
+/* Empty states + section headers                                 */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__empty {
+    padding: 12px;
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.verzeta-chatnav__list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 4px 0 76px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+/* -------------------------------------------------------------- */
+/* Section headers (top-level: PROJECT ROOMS / Group Chats / etc) */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__sectionHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px 6px;
+    border: none;
+    background: transparent;
+    color: var(--vscode-descriptionForeground);
+    font-family: inherit;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+}
+
+.verzeta-chatnav__sectionHeader:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-chatnav__sectionHeader:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-chatnav__chevron {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    color: var(--vscode-icon-foreground, currentColor);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-chatnav__sectionLabel {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-chatnav__count {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    padding: 0 2px;
+}
+
+/* -------------------------------------------------------------- */
+/* Project header row (collapsible)                               */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__projectHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.verzeta-chatnav__projectHeader:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-chatnav__projectHeader:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-chatnav__projectIcon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(149, 95, 195, 0.42);
+    color: rgba(255, 220, 240, 0.92);
+}
+
+.verzeta-chatnav__projectIcon--organization {
+    background: rgba(95, 149, 195, 0.42);
+    color: rgba(220, 240, 255, 0.92);
+}
+
+.verzeta-chatnav__projectBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.verzeta-chatnav__projectName {
+    font-size: var(--vscode-font-size);
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-chatnav__projectKind {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--vscode-descriptionForeground);
+    text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------- */
+/* Subsection header (inside expanded project)                    */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__subsectionHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px 4px 24px;
+}
+
+.verzeta-chatnav__subsectionLabel {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--vscode-descriptionForeground);
+    text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------- */
+/* Member rows (inside expanded project — tap to open 1:1)        */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__memberRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px 7px 24px;
+    border: none;
+    background: transparent;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.verzeta-chatnav__memberRow:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+.verzeta-chatnav__memberRow:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-chatnav__memberAvatar {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    color: var(--vscode-foreground);
+}
+
+.verzeta-chatnav__memberBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.verzeta-chatnav__memberName {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-chatnav__coordStar {
+    color: #5cabff;
+    font-size: 12px;
+}
+
+.verzeta-chatnav__memberRole {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-chatnav__memberChatIcon {
+    flex: 0 0 auto;
+    color: var(--vscode-descriptionForeground);
+    opacity: 0.7;
+}
+.verzeta-chatnav__memberRow:hover .verzeta-chatnav__memberChatIcon {
+    color: var(--vscode-foreground);
+    opacity: 1;
+}
+
+/* -------------------------------------------------------------- */
+/* Action row ("Start group chat with all")                       */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__actionRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px 8px 24px;
+    border: none;
+    background: transparent;
+    color: var(--vscode-textLink-foreground, #5cabff);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.verzeta-chatnav__actionRow:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+.verzeta-chatnav__actionRow:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-chatnav__actionIcon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(149, 95, 195, 0.42);
+    color: rgba(255, 220, 240, 0.92);
+}
+
+.verzeta-chatnav__actionLabel {
+    flex: 1 1 auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-textLink-foreground, #5cabff);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* -------------------------------------------------------------- */
+/* Conversation rows                                              */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__convRowWrap {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}
+
+.verzeta-chatnav__convRowWrap--indent1 .verzeta-chatnav__convRow,
+.verzeta-chatnav__convRowWrap--indent2 .verzeta-chatnav__convRow {
+    padding-left: 24px;
+}
+
+.verzeta-chatnav__convRowWrap:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-chatnav__convRow {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border: none;
+    background: transparent;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.verzeta-chatnav__convRow:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Per-row delete affordance (trash icon). Visible on hover only on */
+/* pointer devices, always visible on touch (the @media check via   */
+/* hover:none keeps the rail usable without a mouse). The button    */
+/* sits over the row's right edge as a sibling, not a child of the  */
+/* row's <button> — nested <button>s would be invalid markup.       */
+/* ---------------------------------------------------------------- */
+
+.verzeta-chatnav__deleteBtn {
+    appearance: none;
+    flex: 0 0 auto;
+    align-self: center;
+    margin: 0 6px 0 2px;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: var(--vscode-descriptionForeground);
+    cursor: pointer;
+    /* Always visible at low opacity so the user knows the
+     * affordance exists; pops to full opacity on row hover or
+     * keyboard focus. Earlier revision left it at opacity 0 which
+     * made the feature undiscoverable. */
+    opacity: 0.55;
+    transition:
+        opacity 80ms ease,
+        color 80ms ease,
+        background-color 80ms ease;
+}
+
+.verzeta-chatnav__convRowWrap:hover .verzeta-chatnav__deleteBtn,
+.verzeta-chatnav__projectHeaderWrap:hover .verzeta-chatnav__deleteBtn,
+.verzeta-chatnav__deleteBtn:focus-visible {
+    opacity: 1;
+}
+
+.verzeta-chatnav__deleteBtn:hover {
+    background: rgba(244, 135, 113, 0.18);
+    color: var(--vscode-errorForeground, #f48771);
+}
+
+.verzeta-chatnav__deleteBtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+@media (hover: none) {
+    .verzeta-chatnav__deleteBtn {
+        opacity: 1;
+    }
+}
+
+.verzeta-chatnav__editBtn {
+    appearance: none;
+    flex: 0 0 auto;
+    align-self: center;
+    margin: 0 0 0 2px;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: var(--vscode-descriptionForeground);
+    cursor: pointer;
+    opacity: 0.55;
+    transition:
+        opacity 80ms ease,
+        color 80ms ease,
+        background-color 80ms ease;
+}
+
+.verzeta-chatnav__projectHeaderWrap:hover .verzeta-chatnav__editBtn,
+.verzeta-chatnav__editBtn:focus-visible {
+    opacity: 1;
+}
+
+.verzeta-chatnav__editBtn:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+    color: var(--vscode-foreground);
+}
+
+.verzeta-chatnav__editBtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+@media (hover: none) {
+    .verzeta-chatnav__editBtn {
+        opacity: 1;
+    }
+}
+
+.verzeta-chatnav__projectHeaderWrap {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}
+
+.verzeta-chatnav__projectHeaderWrap:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-chatnav__projectHeaderWrap > .verzeta-chatnav__projectHeader {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.verzeta-chatnav__convIcon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    color: var(--vscode-foreground);
+}
+
+.verzeta-chatnav__convBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.verzeta-chatnav__convTitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--vscode-foreground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-chatnav__convPreview {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-chatnav__convMeta {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.verzeta-chatnav__convBadge {
+    flex: 0 0 auto;
+    font-size: 10px;
+    color: var(--vscode-descriptionForeground);
+    background: var(--vscode-badge-background);
+    padding: 1px 6px;
+    border-radius: 8px;
+}
+
+.verzeta-chatnav__convTime {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------- */
+/* New chat FAB (floating bottom-right)                           */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__fab {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: none;
+    background: var(--vscode-button-background, #5cabff);
+    color: var(--vscode-button-foreground, #ffffff);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+}
+
+.verzeta-chatnav__fab:hover {
+    background: var(--vscode-button-hoverBackground, #4d9be8);
+}
+
+.verzeta-chatnav__fab:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
+}
+
+.verzeta-chatnav__fabLabel {
+    line-height: 1;
+}
+
+/* -------------------------------------------------------------- */
+/* Virtual list scaffolding                                       */
+/* -------------------------------------------------------------- */
+
+.verzeta-virt {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.verzeta-virt__inner {
+    position: relative;
+}
+
+.verzeta-virt__window {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    will-change: transform;
+}
+
+.verzeta-virt__row {
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* -------------------------------------------------------------- */
+/* Chat header (L24 sub-header) — back arrow + title + actions    */
+/* -------------------------------------------------------------- */
+
+.verzeta-chathdr {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 6px 6px 4px;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+    background: var(--vscode-sideBar-background);
+    min-height: 38px;
+}
+
+.verzeta-chathdr__brand {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    margin-right: 2px;
+}
+
+.verzeta-chathdr__back {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    width: 30px;
+    height: 28px;
+    border-radius: 3px;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.verzeta-chathdr__back:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+.verzeta-chathdr__back:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-chathdr__titlewrap {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.verzeta-chathdr__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+}
+
+.verzeta-chathdr__model {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* Clickable model subtitle — opens ModelPickerSheet. */
+.verzeta-chathdr__modelbtn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-descriptionForeground);
+    padding: 1px 4px;
+    margin: 0;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    text-align: left;
+    width: fit-content;
+}
+.verzeta-chathdr__modelbtn:hover:not(:disabled) {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+    color: var(--vscode-foreground);
+}
+.verzeta-chathdr__modelbtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+.verzeta-chathdr__modelbtn:disabled {
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+
+.verzeta-chathdr__modeltext {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.verzeta-chathdr__modelchevron {
+    flex: 0 0 auto;
+    font-size: 8px;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+.verzeta-chathdr__actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.verzeta-chathdr__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--vscode-descriptionForeground);
+    flex: 0 0 auto;
+}
+.verzeta-chathdr__dot--connected {
+    background: #2ea043;
+    box-shadow: 0 0 0 2px rgba(46, 160, 67, 0.25);
+}
+.verzeta-chathdr__dot--connecting,
+.verzeta-chathdr__dot--authenticating,
+.verzeta-chathdr__dot--reconnecting {
+    background: var(--vscode-charts-yellow, #cca700);
+}
+.verzeta-chathdr__dot--unauthorized,
+.verzeta-chathdr__dot--error {
+    background: var(--vscode-errorForeground, #f48771);
+}
+
+.verzeta-chathdr__iconbtn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+}
+.verzeta-chathdr__iconbtn:hover:not(:disabled) {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+.verzeta-chathdr__iconbtn:disabled {
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+
+/* -------------------------------------------------------------- */
+/* Message timeline                                               */
+/* -------------------------------------------------------------- */
+
+.verzeta-timeline {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 14px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--vscode-editor-background);
+}
+
+.verzeta-timeline__empty {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 32px 24px;
+    text-align: center;
+    background: var(--vscode-editor-background);
+}
+
+.verzeta-timeline__empty-icon {
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.verzeta-timeline__empty-title {
+    font-weight: 600;
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+}
+
+.verzeta-timeline__empty-detail {
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.5;
+    max-width: 280px;
+}
+
+/* -------------------------------------------------------------- */
+/* Message bubbles — user right-aligned, assistant with avatar    */
+/* -------------------------------------------------------------- */
+
+.verzeta-msg {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-msg--user {
+    align-items: stretch;
+}
+
+.verzeta-msg--assistant {
+    align-items: stretch;
+}
+
+.verzeta-msg--system {
+    align-items: center;
+}
+
+/* Android MessageRow header: V-mark + role + · model + @alias.
+   For user bubbles the header is full-width with "You" on the left and
+   the relative time pushed to the right by the spacer (mirrors Android
+   ChatScreen.UserBubble lines 617-642). For assistant bubbles it wraps
+   under the role label. */
+.verzeta-msg__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding-left: 2px;
+}
+
+.verzeta-msg__header--user {
+    padding: 4px 4px 2px;
+}
+
+.verzeta-msg__spacer {
+    flex: 1 1 auto;
+}
+
+.verzeta-msg__time {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    opacity: 0.75;
+    font-variant-numeric: tabular-nums;
+}
+
+.verzeta-msg__avatar {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-msg__role {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--vscode-descriptionForeground);
+    text-transform: none;
+}
+
+.verzeta-msg__model {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    opacity: 0.75;
+    font-family: var(--vscode-editor-font-family, monospace);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+}
+
+.verzeta-msg__alias {
+    font-size: 11px;
+    color: #cd6700;
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-weight: 600;
+}
+
+.verzeta-msg__footer {
+    font-size: 10px;
+    color: var(--vscode-descriptionForeground);
+    opacity: 0.75;
+    padding: 0 4px;
+    line-height: 1.4;
+}
+
+.verzeta-msg__bubble {
+    padding: 8px 12px;
+    border-radius: 10px;
+    line-height: 1.45;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    font-size: var(--vscode-font-size);
+}
+
+.verzeta-msg__bubble--user {
+    /* Full-width bubble to mirror Android ChatScreen.UserBubble
+       (lines 651-664): fillMaxWidth, rounded corners, primary-container
+       background. The previous 82 % max-width replicated iMessage-style
+       narrow bubbles which doesn't match the Verzeta brand. */
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border-radius: 14px;
+    padding: 10px 14px;
+}
+
+.verzeta-msg__bubble--assistant {
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    color: var(--vscode-foreground);
+    border-radius: 14px;
+    padding: 10px 12px;
+}
+
+.verzeta-msg__bubble--system {
+    background: transparent;
+    color: var(--vscode-descriptionForeground);
+    font-style: italic;
+    text-align: center;
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
+/* Long system reports (🤖 sub-agent results, multi-paragraph output)
+   render as a full-width tinted card instead of the centred note. */
+.verzeta-msg--systemreport {
+    align-self: stretch;
+}
+
+.verzeta-msg__bubble--systemreport {
+    background: var(--vscode-editor-inactiveSelectionBackground, rgba(128, 128, 128, 0.12));
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-left: 3px solid var(--vscode-textLink-foreground);
+    border-radius: 4px;
+    color: var(--vscode-foreground);
+    font-size: 12px;
+    padding: 8px 12px;
+}
+
+.verzeta-msg__placeholder {
+    color: var(--vscode-descriptionForeground);
+    font-style: italic;
+}
+
+/* Typing dots animation — shown when an assistant placeholder has
+   no content yet (i.e. message.streaming.started just landed and
+   the first delta has not arrived). */
+.verzeta-msg__typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 0;
+}
+.verzeta-msg__typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.4;
+    animation: verzeta-typing 1.2s infinite ease-in-out;
+}
+.verzeta-msg__typing span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.verzeta-msg__typing span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+@keyframes verzeta-typing {
+    0%,
+    60%,
+    100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+/* -------------------------------------------------------------- */
+/* Thinking disclosure                                            */
+/* -------------------------------------------------------------- */
+
+.verzeta-thinking {
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: transparent;
+    font-size: 11px;
+}
+
+.verzeta-thinking__summary {
+    cursor: pointer;
+    color: var(--vscode-descriptionForeground);
+    list-style: none;
+    user-select: none;
+}
+.verzeta-thinking__summary::-webkit-details-marker {
+    display: none;
+}
+.verzeta-thinking__summary::before {
+    content: '▸ ';
+    color: var(--vscode-icon-foreground, currentColor);
+}
+.verzeta-thinking--open .verzeta-thinking__summary::before {
+    content: '▾ ';
+}
+
+.verzeta-thinking__body {
+    margin-top: 6px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.4;
+}
+
+/* -------------------------------------------------------------- */
+/* Composer                                                       */
+/* -------------------------------------------------------------- */
+
+.verzeta-composer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 10px 10px;
+    border-top: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+    background: var(--vscode-sideBar-background);
+    /* Drives the toggle-pill responsive collapse below. */
+    container-type: inline-size;
+    position: relative;
+}
+.verzeta-composer--dragover {
+    outline: 2px dashed var(--vscode-focusBorder, var(--vscode-button-background));
+    outline-offset: -3px;
+}
+.verzeta-composer__drophint {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    background: var(--vscode-editor-background);
+    opacity: 0.92;
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+.verzeta-composer__slash {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border-radius: 4px;
+    border: 1px solid var(--vscode-widget-border, transparent);
+    background: var(--vscode-editorWidget-background, var(--vscode-sideBar-background));
+    overflow: hidden;
+}
+
+.verzeta-composer__slashrow {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 10px;
+    border: none;
+    background: transparent;
+    color: var(--vscode-foreground);
+    cursor: pointer;
+    text-align: left;
+    font-size: 12px;
+}
+
+.verzeta-composer__slashrow:hover,
+.verzeta-composer__slashrow:focus-visible {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-composer__slashcmd {
+    font-family: var(--vscode-editor-font-family, monospace);
+    color: var(--vscode-textLink-foreground);
+    flex: none;
+}
+
+.verzeta-composer__slashhint {
+    color: var(--vscode-descriptionForeground);
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-composer__banner {
+    padding: 6px 10px;
+    border-radius: 4px;
+    background: var(
+        --vscode-inputValidation-warningBackground,
+        var(--vscode-editor-inactiveSelectionBackground)
+    );
+    color: var(--vscode-inputValidation-warningForeground, var(--vscode-foreground));
+    border: 1px solid
+        var(--vscode-inputValidation-warningBorder, var(--vscode-widget-border, transparent));
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* ── Composer design system ─────────────────────────────────────────
+   One control height (28px) and one gap unit (6px) shared across the
+   input box, the toolbar, the icon buttons, the toggle pills, the
+   gauge, and the send button so margins/padding read as a single
+   coherent surface. The toolbar wraps on narrow widths (sidebar /
+   Plasma-Mobile-class), never overflowing. */
+
+/* Row 1 — the text field, full width. */
+.verzeta-composer__pill {
+    display: flex;
+    align-items: flex-end;
+    padding: 2px 10px;
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border, var(--vscode-widget-border, transparent));
+    border-radius: 8px;
+    transition: border-color 80ms ease;
+}
+.verzeta-composer__pill:focus-within {
+    border-color: var(--vscode-focusBorder);
+}
+
+.verzeta-composer__input {
+    appearance: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    box-sizing: border-box;
+    background: transparent;
+    color: var(--vscode-input-foreground);
+    border: none;
+    padding: 6px 0;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    line-height: 1.45;
+    resize: none;
+    overflow-y: auto;
+    max-height: 140px;
+}
+.verzeta-composer__input:focus-visible {
+    outline: none;
+}
+.verzeta-composer__input::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+}
+.verzeta-composer__input:disabled {
+    color: var(--vscode-disabledForeground);
+    opacity: 0.7;
+}
+
+/* Row 2 — the action toolbar. Single line, never wraps: the spacer
+   collapses and the pills go icon-only (container query below) so the
+   send button always stays on the same row as everything else. */
+.verzeta-composer__toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+.verzeta-composer__toolbarspacer {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Square icon buttons (attach, start-task) — uniform 30px. */
+.verzeta-composer__iconbtn {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--vscode-foreground);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+.verzeta-composer__iconbtn:hover:not(:disabled) {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+.verzeta-composer__iconbtn:disabled {
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+
+/* "+" add-context / add-files dropdown anchored to the toolbar button. */
+.verzeta-composer__attachwrap {
+    position: relative;
+    display: inline-flex;
+}
+.verzeta-composer__attachbackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+}
+.verzeta-composer__attachmenu {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    z-index: 21;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 6px;
+    background: var(--vscode-menu-background, var(--vscode-editorWidget-background));
+    border: 1px solid var(--vscode-menu-border, var(--vscode-widget-border, transparent));
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.32);
+}
+.verzeta-composer__attachitem {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    width: 100%;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--vscode-menu-foreground, var(--vscode-foreground));
+    text-align: left;
+    cursor: pointer;
+}
+.verzeta-composer__attachitem:hover {
+    background: var(--vscode-menu-selectionBackground, var(--vscode-list-hoverBackground));
+    color: var(--vscode-menu-selectionForeground, var(--vscode-foreground));
+}
+.verzeta-composer__attachitem-title {
+    font-size: 12px;
+    font-weight: 600;
+}
+.verzeta-composer__attachitem-sub {
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+/* Toggle pills (Thinking / Tools / RAG) — icon + collapsing label,
+   uniform 32px height. */
+.verzeta-composer__togglepill {
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 0 11px;
+    border-radius: 15px;
+    border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    background: transparent;
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.verzeta-composer__togglepill:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+    color: var(--vscode-foreground);
+}
+.verzeta-composer__togglepill--on {
+    background: var(--vscode-button-background);
+    border-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+.verzeta-composer__togglepill--on:hover {
+    background: var(--vscode-button-hoverBackground, var(--vscode-button-background));
+    color: var(--vscode-button-foreground);
+}
+.verzeta-composer__pillicon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+}
+.verzeta-composer__pilltext {
+    white-space: nowrap;
+}
+
+/* Responsive: when the composer is narrow, collapse the pills to
+   icon-only so the toolbar never overflows or wraps awkwardly —
+   the same icon-when-tight / text-when-roomy behaviour as the
+   desktop. */
+@container (max-width: 440px) {
+    .verzeta-composer__pilltext {
+        display: none;
+    }
+    .verzeta-composer__togglepill {
+        padding: 0 8px;
+    }
+}
+
+/* Animated context-fill ring. */
+.verzeta-composer__gauge {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.verzeta-composer__gaugeTrack {
+    stroke: var(--vscode-widget-border, rgba(128, 128, 128, 0.35));
+}
+.verzeta-composer__gaugeFill {
+    stroke: var(--vscode-descriptionForeground);
+    transition:
+        stroke-dasharray 400ms ease,
+        stroke 200ms ease;
+}
+.verzeta-composer__gauge--amber .verzeta-composer__gaugeFill {
+    stroke: var(--vscode-editorWarning-foreground, #d19a66);
+}
+.verzeta-composer__gauge--red .verzeta-composer__gaugeFill {
+    stroke: var(--vscode-editorError-foreground, #e06c75);
+}
+
+/* Send / stop — a touch larger than the toolbar buttons so it reads
+   as the primary action. */
+.verzeta-composer__send,
+.verzeta-composer__send--stop {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: #cd6700;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+.verzeta-composer__send:hover:not(:disabled) {
+    background: #b35a00;
+}
+.verzeta-composer__send:disabled {
+    background: var(
+        --vscode-button-secondaryBackground,
+        var(--vscode-editor-inactiveSelectionBackground)
+    );
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+.verzeta-composer__send--stop {
+    background: var(--vscode-errorForeground, #d33);
+}
+.verzeta-composer__send--stop:hover {
+    filter: brightness(1.1);
+}
+
+/* "Start a Task" modal — mirrors the desktop dialog. */
+.verzeta-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.45);
+}
+.verzeta-modal {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--vscode-widget-border, transparent);
+    background: var(--vscode-editorWidget-background, var(--vscode-sideBar-background));
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.verzeta-modal__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+.verzeta-modal__desc {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+.verzeta-modal__input {
+    box-sizing: border-box;
+    width: 100%;
+    resize: vertical;
+    min-height: 84px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--vscode-input-border, var(--vscode-widget-border, transparent));
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    line-height: 1.45;
+}
+.verzeta-modal__input:focus-visible {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+}
+.verzeta-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.verzeta-modal__btn {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 12px;
+}
+.verzeta-modal__btn--primary {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+.verzeta-modal__btn--primary:hover:not(:disabled) {
+    background: var(--vscode-button-hoverBackground, var(--vscode-button-background));
+}
+.verzeta-modal__btn--primary:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+.verzeta-modal__btn--secondary {
+    background: var(--vscode-button-secondaryBackground, transparent);
+    color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+    border-color: var(--vscode-widget-border, transparent);
+}
+.verzeta-modal__btn--secondary:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+
+/* Attachment chips above the pill — mirrors Android
+   PendingAttachmentsStrip (ChatScreen.kt:964-1028). */
+.verzeta-composer__attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 2px;
+}
+
+.verzeta-composer__error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: var(
+        --vscode-inputValidation-errorBackground,
+        var(--vscode-editor-inactiveSelectionBackground)
+    );
+    color: var(--vscode-inputValidation-errorForeground, var(--vscode-foreground));
+    border: 1px solid
+        var(--vscode-inputValidation-errorBorder, var(--vscode-widget-border, transparent));
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.verzeta-composer__error-dismiss {
+    appearance: none;
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: inherit;
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+.verzeta-composer__error-dismiss:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.verzeta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 4px 4px 8px;
+    border-radius: 999px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    color: var(--vscode-foreground);
+    font-size: 11px;
+    max-width: 220px;
+}
+
+.verzeta-chip__icon {
+    display: inline-flex;
+    color: var(--vscode-descriptionForeground);
+    flex: 0 0 auto;
+}
+
+.verzeta-chip__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.verzeta-chip__size {
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+    color: var(--vscode-descriptionForeground);
+    opacity: 0.8;
+}
+
+.verzeta-chip__remove {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--vscode-descriptionForeground);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+.verzeta-chip__remove:hover:not(:disabled) {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+    color: var(--vscode-foreground);
+}
+.verzeta-chip__remove:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* -------------------------------------------------------------- */
+/* Markdown blocks                                                */
+/* -------------------------------------------------------------- */
+
+.md-p {
+    margin: 0 0 6px;
+}
+.md-p:last-child {
+    margin-bottom: 0;
+}
+
+.md-h1,
+.md-h2,
+.md-h3 {
+    margin: 8px 0 4px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+.md-h1 {
+    font-size: 1.3em;
+}
+.md-h2 {
+    font-size: 1.15em;
+}
+.md-h3 {
+    font-size: 1.05em;
+}
+
+.md-ul,
+.md-ol {
+    margin: 4px 0 6px;
+    padding-left: 20px;
+}
+.md-li {
+    margin: 2px 0;
+}
+
+.md-code {
+    margin: 4px 0;
+    padding: 8px;
+    background: var(--vscode-textBlockQuote-background, var(--vscode-editor-background));
+    border: 1px solid var(--vscode-textBlockQuote-border, transparent);
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+.md-code code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--vscode-foreground);
+    white-space: pre;
+}
+
+.md-code__line {
+    display: block;
+}
+
+.md-icode {
+    background: var(--vscode-textCodeBlock-background, var(--vscode-textBlockQuote-background));
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: 0.92em;
+}
+
+.md-strong {
+    font-weight: 600;
+}
+
+.md-em {
+    font-style: italic;
+}
+
+.md-a {
+    color: var(--vscode-textLink-foreground);
+    text-decoration: none;
+}
+.md-a:hover {
+    text-decoration: underline;
+}
+
+/* -------------------------------------------------------------- */
+/* Conversation Settings sheet — slides over chat detail          */
+/* -------------------------------------------------------------- */
+
+.verzeta-sheet {
+    position: absolute;
+    inset: 0;
+    background: var(--vscode-editor-background);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    animation: verzeta-sheet-slide 180ms ease-out;
+}
+
+@keyframes verzeta-sheet-slide {
+    from {
+        transform: translateX(8%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.verzeta-chat__detail {
+    position: relative;
+}
+
+.verzeta-sheet__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+    background: var(--vscode-sideBar-background);
+    min-height: 40px;
+}
+
+.verzeta-sheet__title {
+    margin: 0;
+    flex: 1 1 auto;
+    font-size: var(--vscode-font-size);
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-sheet__close {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+}
+.verzeta-sheet__close:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-sheet__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 14px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.verzeta-sheet__empty {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    padding: 32px 24px;
+}
+
+.verzeta-sheet__section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.verzeta-sheet__label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-sheet__detail {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-sheet__textarea {
+    appearance: none;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    line-height: 1.45;
+    resize: vertical;
+    min-height: 90px;
+}
+.verzeta-sheet__textarea:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-sheet__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+@media (max-width: 480px) {
+    .verzeta-sheet__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.verzeta-sheet__numberfield {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-sheet__numberlabel {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-sheet__numberinput {
+    appearance: none;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+}
+.verzeta-sheet__numberinput:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-sheet__range {
+    width: 100%;
+    accent-color: var(--vscode-button-background, var(--vscode-focusBorder));
+    cursor: pointer;
+}
+
+.verzeta-sheet__toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 6px 0;
+    cursor: pointer;
+}
+
+.verzeta-sheet__togglebody {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-sheet__togglelabel {
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+}
+
+.verzeta-sheet__toggledetail {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-sheet__toggle input[type='checkbox'] {
+    flex: 0 0 auto;
+    margin-top: 3px;
+    accent-color: var(--vscode-focusBorder, #cd6700);
+}
+
+.verzeta-sheet__select {
+    appearance: none;
+    background: var(--vscode-dropdown-background);
+    color: var(--vscode-dropdown-foreground);
+    border: 1px solid var(--vscode-dropdown-border, var(--vscode-input-border, transparent));
+    border-radius: 4px;
+    padding: 6px 28px 6px 8px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--vscode-dropdown-foreground) 50%),
+        linear-gradient(135deg, var(--vscode-dropdown-foreground) 50%, transparent 50%);
+    background-position:
+        right 12px top 50%,
+        right 7px top 50%;
+    background-size:
+        5px 5px,
+        5px 5px;
+    background-repeat: no-repeat;
+}
+.verzeta-sheet__select:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+/* -------------------------------------------------------------- */
+/* Rail wrapper (sits between ChatNavRail and FolderCreateSheet)  */
+/* -------------------------------------------------------------- */
+
+.verzeta-chat__railwrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* -------------------------------------------------------------- */
+/* "+ New folder" / "+ New group" inline buttons at the rail top  */
+/* Renamed to __newRow* (was __actionRow) so they no longer        */
+/* collide with the per-project "Start group chat with all" rule  */
+/* further up in this file. flex-basis: 0 keeps both buttons      */
+/* equally wide regardless of label length.                       */
+/* -------------------------------------------------------------- */
+
+.verzeta-chatnav__newRow {
+    display: flex;
+    gap: 6px;
+    margin: 0 8px 6px;
+}
+
+.verzeta-chatnav__newRowBtn {
+    flex: 1 1 0;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px dashed var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    background: transparent;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.verzeta-chatnav__newRowBtn:hover {
+    background: var(--vscode-list-hoverBackground);
+    border-color: var(--vscode-focusBorder);
+}
+
+.verzeta-chatnav__newRowBtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-chatnav__newRowLabel {
+    line-height: 1;
+}
+
+/* -------------------------------------------------------------- */
+/* Folder create sheet — text input, radio group, footer buttons  */
+/* -------------------------------------------------------------- */
+
+.verzeta-sheet__textinput {
+    appearance: none;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    line-height: 1.4;
+}
+
+.verzeta-sheet__textinput:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-sheet__textinput::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+}
+
+.verzeta-sheet__radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-sheet__radioOption {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    transition:
+        border-color 80ms ease,
+        background-color 80ms ease;
+}
+
+.verzeta-sheet__radioOption:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-sheet__radioOption--selected {
+    border-color: var(--vscode-focusBorder, #cd6700);
+    background: var(--vscode-list-activeSelectionBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-sheet__radioOption input[type='radio'] {
+    flex: 0 0 auto;
+    margin-top: 3px;
+    accent-color: var(--vscode-focusBorder, #cd6700);
+}
+
+.verzeta-sheet__radioBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-sheet__radioLabel {
+    font-size: var(--vscode-font-size);
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-sheet__radioDetail {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.4;
+}
+
+.verzeta-sheet__footer {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+    background: var(--vscode-sideBar-background);
+}
+
+.verzeta-sheet__btn {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 80px;
+}
+
+.verzeta-sheet__btn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+
+.verzeta-sheet__btn--primary {
+    background: var(--vscode-button-background, #cd6700);
+    color: var(--vscode-button-foreground, #ffffff);
+}
+
+.verzeta-sheet__btn--primary:hover:not(:disabled) {
+    background: var(--vscode-button-hoverBackground, #b35a00);
+}
+
+.verzeta-sheet__btn--primary:disabled {
+    background: var(
+        --vscode-button-secondaryBackground,
+        var(--vscode-editor-inactiveSelectionBackground)
+    );
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+
+.verzeta-sheet__btn--secondary {
+    background: transparent;
+    color: var(--vscode-foreground);
+    border-color: var(--vscode-widget-border, var(--vscode-input-border, transparent));
+}
+
+.verzeta-sheet__btn--secondary:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-sheet__btn--danger {
+    background: transparent;
+    color: var(--vscode-errorForeground, #f48771);
+    border-color: var(--vscode-errorForeground, #f48771);
+}
+
+.verzeta-sheet__btn--danger:hover {
+    background: rgba(244, 135, 113, 0.12);
+}
+
+/* -------------------------------------------------------------- */
+/* Conversation-settings row-with-action layout (Primary Agent,   */
+/* Model — single-line label with inline Change/select button)   */
+/* -------------------------------------------------------------- */
+
+.verzeta-sheet__rowwithaction {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 4px;
+}
+
+.verzeta-sheet__rowprimary {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--vscode-foreground);
+    font-size: var(--vscode-font-size);
+}
+
+.verzeta-sheet__rowbutton {
+    appearance: none;
+    flex: 0 0 auto;
+    background: transparent;
+    border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    color: var(--vscode-foreground);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.verzeta-sheet__rowbutton:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-sheet__rowbutton:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+
+.verzeta-sheet__select--inline {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 140px;
+}
+
+/* -------------------------------------------------------------- */
+/* ModelPickerSheet — sits on top of the chat detail              */
+/* -------------------------------------------------------------- */
+
+.verzeta-modelpicker__searchbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px 6px;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+}
+
+.verzeta-modelpicker__searchicon {
+    flex: 0 0 auto;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-modelpicker__search {
+    appearance: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.verzeta-modelpicker__search:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-modelpicker__search::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+}
+
+.verzeta-modelpicker__searchclear {
+    appearance: none;
+    flex: 0 0 auto;
+    background: transparent;
+    border: none;
+    color: var(--vscode-descriptionForeground);
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.verzeta-modelpicker__searchclear:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+    color: var(--vscode-foreground);
+}
+
+.verzeta-modelpicker__searchcount {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-variant-numeric: tabular-nums;
+}
+
+.verzeta-modelpicker__provider {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.verzeta-modelpicker__providerHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+    padding: 0 2px;
+}
+
+.verzeta-modelpicker__providerName {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-modelpicker__caps {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.verzeta-modelpicker__cap {
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.85;
+}
+
+.verzeta-modelpicker__models {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-modelpicker__model {
+    appearance: none;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-modelpicker__model:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-modelpicker__model:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-modelpicker__model--active {
+    background: var(--vscode-list-activeSelectionBackground);
+    color: var(--vscode-list-activeSelectionForeground);
+    border-color: var(--vscode-focusBorder, transparent);
+}
+
+.verzeta-modelpicker__modelName {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verzeta-modelpicker__activeBadge {
+    flex: 0 0 auto;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.verzeta-modelpicker__footer {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 14px 14px;
+    border-top: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+}
+
+.verzeta-modelpicker__cancel {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    color: var(--vscode-foreground);
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    cursor: pointer;
+}
+
+.verzeta-modelpicker__cancel:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-modelpicker__cancel:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+
+/* ================================================================== */
+/* AgentProgressBanner — above-composer status of an in-flight agent. */
+/* ================================================================== */
+
+.verzeta-agentbanner {
+    margin: 0 10px 6px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    border: 1px solid var(--vscode-widget-border, transparent);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow: hidden;
+}
+
+.verzeta-agentbanner__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-agentbanner__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #cd6700; /* Verzeta primary */
+}
+
+.verzeta-agentbanner__title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-agentbanner__counter {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-variant-numeric: tabular-nums;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--vscode-badge-background);
+}
+
+.verzeta-agentbanner__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+    max-height: 180px;
+}
+
+.verzeta-agentbanner__step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.verzeta-agentbanner__stepIcon {
+    flex: 0 0 14px;
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-agentbanner__stepIcon--running {
+    color: var(--vscode-charts-blue, #4fc1ff);
+}
+.verzeta-agentbanner__stepIcon--success {
+    color: #2ea043;
+}
+.verzeta-agentbanner__stepIcon--error {
+    color: var(--vscode-errorForeground, #d33);
+}
+.verzeta-agentbanner__stepIcon--pending {
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-agentbanner__stepText {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--vscode-foreground);
+    overflow-wrap: anywhere;
+}
+
+.verzeta-agentbanner__stepText--error {
+    color: var(--vscode-errorForeground, #d33);
+}
+.verzeta-agentbanner__stepText--pending {
+    opacity: 0.65;
+}
+
+@keyframes verzeta-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.verzeta-spin {
+    animation: verzeta-spin 1200ms linear infinite;
+}
+
+/* ================================================================== */
+/* PendingToolConfirmationModal — host-level approve/deny dialog.     */
+/* ================================================================== */
+
+.verzeta-toolconfirm-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.verzeta-toolconfirm {
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    border-radius: 10px;
+    width: min(440px, 100%);
+    max-height: calc(100vh - 32px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+}
+
+.verzeta-toolconfirm__header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--vscode-widget-border, transparent);
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+}
+
+.verzeta-toolconfirm__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-toolconfirm__body {
+    padding: 12px 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.verzeta-toolconfirm__subtitle {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-toolconfirm__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-toolconfirm__fieldLabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-toolconfirm__toolName {
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--vscode-textCodeBlock-background, var(--vscode-textBlockQuote-background));
+    color: var(--vscode-foreground);
+    align-self: flex-start;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.verzeta-toolconfirm__args {
+    margin: 0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--vscode-textCodeBlock-background, var(--vscode-textBlockQuote-background));
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--vscode-foreground);
+    max-height: 220px;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.verzeta-toolconfirm__hint {
+    margin: 0;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-toolconfirm__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--vscode-widget-border, transparent);
+    background: var(--vscode-editor-background);
+}
+
+.verzeta-toolconfirm__btn {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    cursor: pointer;
+}
+
+.verzeta-toolconfirm__btn--primary {
+    background: var(--vscode-button-background, #cd6700);
+    color: var(--vscode-button-foreground, #ffffff);
+}
+.verzeta-toolconfirm__btn--primary:hover {
+    background: var(--vscode-button-hoverBackground, #b85b00);
+}
+
+.verzeta-toolconfirm__btn--secondary {
+    background: transparent;
+    border-color: var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    color: var(--vscode-foreground);
+}
+.verzeta-toolconfirm__btn--secondary:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-toolconfirm__btn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+
+/* ================================================================== */
+/* Folder editor team section + Add Member dialog                     */
+/* ================================================================== */
+
+.verzeta-team {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-team__empty {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--vscode-list-hoverBackground);
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.verzeta-team__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    border: 1px solid var(--vscode-widget-border, transparent);
+}
+
+.verzeta-team__avatar {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(205, 103, 0, 0.18);
+    color: var(--vscode-foreground);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.verzeta-team__rowBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-team__alias {
+    appearance: none;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 13px;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+.verzeta-team__alias:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 0;
+}
+
+.verzeta-team__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.verzeta-team__agentName {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-team__coordTag {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(205, 103, 0, 0.22);
+    color: var(--vscode-foreground);
+    font-weight: 600;
+}
+
+.verzeta-team__star,
+.verzeta-team__delete {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-descriptionForeground);
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+}
+.verzeta-team__star:hover,
+.verzeta-team__delete:hover {
+    background: var(--vscode-list-hoverBackground);
+    color: var(--vscode-foreground);
+}
+.verzeta-team__star--filled {
+    color: #cd6700;
+}
+.verzeta-team__delete:hover {
+    color: var(--vscode-errorForeground, #d33);
+}
+
+.verzeta-team__addBtn {
+    appearance: none;
+    background: transparent;
+    border: 1px dashed var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    color: var(--vscode-foreground);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+}
+.verzeta-team__addBtn:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+/* Add Member dialog --------------------------------------------------*/
+
+.verzeta-addmember-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 950;
+    padding: 16px;
+}
+
+.verzeta-addmember {
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 10px;
+    width: min(480px, 100%);
+    max-height: calc(100vh - 32px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+}
+
+.verzeta-addmember__header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--vscode-widget-border, transparent);
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-addmember__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    flex: 1 1 auto;
+}
+
+.verzeta-addmember__body {
+    padding: 12px 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.verzeta-addmember__section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-addmember__sectionTitle {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-addmember__agents {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.verzeta-addmember__agentRow {
+    appearance: none;
+    background: var(--vscode-list-hoverBackground);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: left;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.verzeta-addmember__agentRow:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-addmember__agentRow--picked {
+    border-color: #cd6700;
+    background: rgba(205, 103, 0, 0.12);
+}
+
+.verzeta-addmember__agentName {
+    font-weight: 600;
+}
+
+.verzeta-addmember__agentDesc {
+    flex-basis: 100%;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.4;
+}
+
+.verzeta-addmember__empty {
+    margin: 0;
+    padding: 10px;
+    background: var(--vscode-list-hoverBackground);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-addmember__hint,
+.verzeta-addmember__error {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-addmember__error {
+    color: var(--vscode-errorForeground, #d33);
+}
+
+.verzeta-addmember__coordToggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.verzeta-addmember__coordLabel {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.verzeta-addmember__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--vscode-widget-border, transparent);
+    background: var(--vscode-editor-background);
+}
+
+/* ================================================================== */
+/* KickoffSheet — "Start chatting with your team?" rows               */
+/* ================================================================== */
+
+.verzeta-kickoff__row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 8px;
+    background: var(--vscode-editorWidget-background, var(--vscode-list-hoverBackground));
+    cursor: pointer;
+}
+
+.verzeta-kickoff__row:hover {
+    border-color: var(--vscode-focusBorder);
+}
+
+.verzeta-kickoff__row--disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.verzeta-kickoff__row--disabled:hover {
+    border-color: var(--vscode-widget-border, transparent);
+}
+
+.verzeta-kickoff__row > input[type='checkbox'] {
+    margin-top: 2px;
+    flex: 0 0 auto;
+}
+
+.verzeta-kickoff__rowMain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+}
+
+.verzeta-kickoff__rowTitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-kickoff__rowHint {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* ================================================================== */
+/* Per-member row extensions (override summary + Configure button)    */
+/* ================================================================== */
+
+.verzeta-team__row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.verzeta-team__rowHead {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+.verzeta-team__override {
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+    overflow-wrap: anywhere;
+}
+
+.verzeta-team__override--set {
+    color: #cd6700;
+    font-weight: 600;
+}
+
+.verzeta-team__configureBtn {
+    appearance: none;
+    background: var(--vscode-list-hoverBackground);
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.verzeta-team__configureBtn:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-team__configureBtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 1px;
+}
+
+/* ================================================================== */
+/* ConfigureMemberSheet modal — per-member provider/model/tools.       */
+/* ================================================================== */
+
+.verzeta-configmember-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 970;
+    padding: 16px;
+}
+
+.verzeta-configmember {
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 10px;
+    width: min(520px, 100%);
+    max-height: calc(100vh - 32px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+}
+
+.verzeta-configmember__header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--vscode-widget-border, transparent);
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-configmember__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    flex: 1 1 auto;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-configmember__body {
+    padding: 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.verzeta-configmember__intro {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-configmember__section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-configmember__label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-configmember__hint,
+.verzeta-configmember__empty,
+.verzeta-configmember__caps {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-configmember__select select {
+    appearance: none;
+    width: 100%;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.verzeta-configmember__select select:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 0;
+}
+
+.verzeta-configmember__caps {
+    padding-left: 2px;
+}
+
+.verzeta-configmember__tools {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.verzeta-configmember__tool {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: var(--vscode-list-hoverBackground);
+    cursor: pointer;
+}
+
+.verzeta-configmember__tool:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.verzeta-configmember__toolBody {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+}
+
+.verzeta-configmember__toolName {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-configmember__toolDesc {
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-configmember__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--vscode-widget-border, transparent);
+}
+
+/* ================================================================== */
+/* HeartbeatsSection — scheduled subagent runs in folder editor.       */
+/* ================================================================== */
+
+.verzeta-hb__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-hb__count {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.verzeta-hb__empty {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--vscode-list-hoverBackground);
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.verzeta-hb__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.verzeta-hb__card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    border: 1px solid var(--vscode-widget-border, transparent);
+}
+
+.verzeta-hb__cardHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verzeta-hb__icon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(205, 103, 0, 0.18);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #cd6700;
+}
+
+.verzeta-hb__cardBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-hb__cardTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.verzeta-hb__cardMeta {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    overflow-wrap: anywhere;
+}
+
+.verzeta-hb__cardMeta code {
+    font-family: var(--vscode-editor-font-family, monospace);
+    background: var(--vscode-textCodeBlock-background, var(--vscode-textBlockQuote-background));
+    padding: 0 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.verzeta-hb__actions {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.verzeta-hb__iconBtn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-descriptionForeground);
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+}
+
+.verzeta-hb__iconBtn:hover {
+    background: var(--vscode-list-hoverBackground);
+    color: var(--vscode-foreground);
+}
+
+.verzeta-hb__iconBtn--danger:hover {
+    color: var(--vscode-errorForeground, #d33);
+}
+
+.verzeta-hb__goal {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+    overflow-wrap: anywhere;
+}
+
+.verzeta-hb__statusrow {
+    display: flex;
+    gap: 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.verzeta-hb__disabled {
+    color: var(--vscode-errorForeground, #d33);
+    font-weight: 700;
+}
+
+.verzeta-hb__lastfire {
+    color: var(--vscode-descriptionForeground);
+}
+
+/* ================================================================== */
+/* PreferredSkillsSection + ProjectDocumentsSection                    */
+/* ================================================================== */
+
+.verzeta-skills__explain {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--vscode-list-hoverBackground);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-docs__error {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(211, 51, 51, 0.12);
+    color: var(--vscode-errorForeground, #d33);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.verzeta-docs__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-docs__row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    border: 1px solid var(--vscode-widget-border, transparent);
+}
+
+.verzeta-docs__icon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--vscode-list-hoverBackground);
+    color: var(--vscode-foreground);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verzeta-docs__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-docs__name {
+    font-size: 13px;
+    color: var(--vscode-foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.verzeta-docs__size {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ================================================================== */
+/* Chat tools menu + overlays (Plans, Tool calls, Activity, Polls, Media) */
+/* ================================================================== */
+
+.verzeta-chatmenu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 940;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 56px 12px 0 0;
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.verzeta-chatmenu {
+    background: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-widget-border, transparent);
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+    min-width: 180px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.verzeta-chatmenu__item {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--vscode-foreground);
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.verzeta-chatmenu__item:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-chatmenu__item:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.verzeta-chatmenu__sep {
+    height: 1px;
+    background: var(--vscode-widget-border, rgba(255, 255, 255, 0.08));
+    margin: 4px 0;
+}
+
+/* ================================================================== */
+/* Code-block Apply header (IDE Apply Suggestion as Workspace Edit)   */
+/* ================================================================== */
+
+.md-code-wrap {
+    margin: 8px 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--vscode-widget-border, transparent);
+    background: var(--vscode-editor-background);
+}
+
+.md-code-wrap .md-code {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+}
+
+.md-code__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--vscode-editorWidget-background, rgba(255, 255, 255, 0.04));
+    border-bottom: 1px solid var(--vscode-widget-border, transparent);
+}
+
+.md-code__path {
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+}
+
+.md-code__apply {
+    appearance: none;
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: 1px solid var(--vscode-button-border, transparent);
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+
+.md-code__apply:hover {
+    background: var(--vscode-button-hoverBackground, var(--vscode-button-background));
+}
+
+/* ================================================================== */
+/* IDE Notice toast (above the composer)                              */
+/* ================================================================== */
+
+.verzeta-ide-toast {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 6px 12px 0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--vscode-widget-border, transparent);
+    background: var(--vscode-editorInfo-background, rgba(125, 91, 196, 0.15));
+    color: var(--vscode-foreground);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.verzeta-ide-toast--warn {
+    background: var(--vscode-editorWarning-background, rgba(204, 153, 51, 0.16));
+}
+
+.verzeta-ide-toast--error {
+    background: var(--vscode-editorError-background, rgba(244, 135, 113, 0.18));
+}
+
+.verzeta-ide-toast__msg {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
+.verzeta-ide-toast__close {
+    appearance: none;
+    background: transparent;
+    color: var(--vscode-foreground);
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.verzeta-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--vscode-editor-background);
+    z-index: 930;
+    display: flex;
+    flex-direction: column;
+}
+
+.verzeta-overlay__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--vscode-widget-border, transparent);
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+}
+
+.verzeta-overlay__back {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-foreground);
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.verzeta-overlay__back:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-overlay__heading {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.verzeta-overlay__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.verzeta-overlay__subtitle {
+    margin: 0;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-overlay__scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.verzeta-overlay__taskbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.verzeta-overlay__taskbar .verzeta-sheet__textinput {
+    flex: 1 1 200px;
+}
+
+.verzeta-overlay__empty {
+    margin: 12px 0;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--vscode-list-hoverBackground);
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-overlay__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.verzeta-overlay__card {
+    border-radius: 10px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    border: 1px solid var(--vscode-widget-border, transparent);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-overlay__cardHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.verzeta-overlay__cardToggle {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--vscode-foreground);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.verzeta-overlay__cardBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-overlay__cardTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    overflow-wrap: anywhere;
+}
+
+.verzeta-overlay__cardMeta {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-overlay__substack {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-overlay__substep {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 6px 0;
+}
+
+.verzeta-overlay__substatus {
+    flex: 0 0 12px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.verzeta-overlay__substepBody {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-overlay__substepDesc {
+    font-size: 12px;
+    color: var(--vscode-foreground);
+}
+
+.verzeta-overlay__substepResult,
+.verzeta-overlay__substepError {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-overlay__substepError {
+    color: var(--vscode-errorForeground, #d33);
+}
+
+.verzeta-overlay__substepActions {
+    display: flex;
+    gap: 4px;
+    flex: 0 0 auto;
+}
+
+.verzeta-overlay__substepBtn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    color: var(--vscode-foreground);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.verzeta-overlay__substepBtn:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-overlay__details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-overlay__activityKind {
+    flex: 0 0 auto;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
+.verzeta-overlay__form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    border: 1px dashed var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    border-radius: 8px;
+}
+
+.verzeta-overlay__formRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.verzeta-overlay__formRow select,
+.verzeta-overlay__formRow input[type='number'] {
+    flex: 0 0 auto;
+}
+
+.verzeta-overlay__formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.verzeta-overlay__pollOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
+.verzeta-overlay__pollVote {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--vscode-foreground);
+    text-align: left;
+    cursor: pointer;
+    flex: 1 1 auto;
+    padding: 0;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.verzeta-overlay__pollVote:disabled {
+    cursor: default;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-overlay__pollCount {
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-overlay__tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.verzeta-overlay__tab {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, transparent));
+    color: var(--vscode-foreground);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.verzeta-overlay__tab--active {
+    background: rgba(125, 91, 196, 0.32);
+    border-color: rgba(125, 91, 196, 0.55);
+}
+
+/* In-chat workspace-share banner — noticeable until dismissed. */
+.verzeta-sharebanner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 7px 10px;
+    font-size: 12px;
+    background: var(
+        --vscode-inputValidation-warningBackground,
+        var(--vscode-editor-inactiveSelectionBackground)
+    );
+    color: var(--vscode-inputValidation-warningForeground, var(--vscode-foreground));
+    border-bottom: 1px solid
+        var(--vscode-inputValidation-warningBorder, var(--vscode-widget-border, transparent));
+}
+
+.verzeta-sharebanner__icon {
+    flex: none;
+}
+
+.verzeta-sharebanner__text {
+    flex: 1 1 60%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
+.verzeta-sharebanner__action {
+    flex: none;
+    border: none;
+    border-radius: 3px;
+    padding: 4px 10px;
+    cursor: pointer;
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    font-size: 11px;
+}
+
+.verzeta-sharebanner__action:hover {
+    background: var(--vscode-button-hoverBackground);
+}
+
+.verzeta-sharebanner__dismiss {
+    flex: none;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    padding: 2px 4px;
+}
+
+.verzeta-sharebanner__dismiss:hover {
+    opacity: 1;
+}

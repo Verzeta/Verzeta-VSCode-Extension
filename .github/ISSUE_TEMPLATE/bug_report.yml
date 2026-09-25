@@ -1,0 +1,114 @@
+# SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
+name: Bug report
+description: Report a reproducible defect. Reports without troubleshooting steps and a debug log are closed automatically.
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for filing a bug. **Please read this first:**
+
+              - Low-effort reports ("X is not working" with no logs) are **closed automatically** and reopened once the required information is added.
+              - Work through the [Troubleshooting guide](https://github.com/Verzeta/Verzeta-VSCode-Extension/blob/main/docs/User/09-troubleshooting.md) before filing.
+              - **Do not paste API keys, pairing secrets, or private conversation contents.** Redact before posting.
+
+    - type: checkboxes
+      id: prerequisites
+      attributes:
+          label: Before you file (all required)
+          description: Reports that have not done these are closed.
+          options:
+              - label: I worked through the [Troubleshooting guide](https://github.com/Verzeta/Verzeta-VSCode-Extension/blob/main/docs/User/09-troubleshooting.md) and my issue is not resolved there.
+                required: true
+              - label: I searched [existing issues](https://github.com/Verzeta/Verzeta-VSCode-Extension/issues?q=is%3Aissue) and this is not a duplicate.
+                required: true
+              - label: I am on the latest extension version and can still reproduce this.
+                required: true
+              - label: 'I reloaded the VS Code window (Developer: Reload Window) and the problem persists.'
+                required: true
+              - label: I have removed API keys and private data from everything I paste below.
+                required: true
+
+    - type: input
+      id: ext-version
+      attributes:
+          label: Extension version
+          description: From the Extensions view (Verzeta), or the About entry.
+          placeholder: e.g. 1.0.0
+      validations:
+          required: true
+
+    - type: input
+      id: vscode-version
+      attributes:
+          label: VS Code version and OS
+          description: Help → About in VS Code.
+          placeholder: e.g. VS Code 1.96.0, Windows 11 / Ubuntu 24.04 / macOS 14
+      validations:
+          required: true
+
+    - type: input
+      id: host-version
+      attributes:
+          label: Verzeta Studio host version you paired with
+          description: The desktop host this client connects to (Help → About in the host).
+          placeholder: e.g. 1.0.0
+      validations:
+          required: true
+
+    - type: textarea
+      id: steps
+      attributes:
+          label: Steps to reproduce
+          description: Exact, numbered steps. A bug we cannot reproduce cannot be fixed.
+          placeholder: |
+              1. Open the Verzeta panel ...
+              2. Pair with host ...
+              3. Do ...
+              4. Observe ...
+      validations:
+          required: true
+
+    - type: textarea
+      id: expected
+      attributes:
+          label: What you expected to happen
+      validations:
+          required: true
+
+    - type: textarea
+      id: actual
+      attributes:
+          label: What actually happened
+          description: Include the exact error text shown in VS Code, if any.
+      validations:
+          required: true
+
+    - type: textarea
+      id: debug-log
+      attributes:
+          label: Debug log with traces (required)
+          description: |
+              Turn on verbose logging, reproduce the problem, then paste the relevant section. This is required: "I didn't capture a log" reports are closed.
+
+              1. Set the log level to debug in your VS Code `settings.json`:
+                 ```json
+                 "verzeta.log.level": "debug"
+                 ```
+              2. Reproduce the problem.
+              3. Open **View → Output → Verzeta** and copy the connection events, message flow, and errors around the failure.
+
+              Redact API keys and pairing secrets before pasting.
+          render: text
+      validations:
+          required: true
+
+    - type: textarea
+      id: extra
+      attributes:
+          label: Anything else you already ruled out (optional)
+      validations:
+          required: false

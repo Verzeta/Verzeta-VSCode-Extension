@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
+# Runs the project's own `npm run verify` gate (typecheck, lint, format, audit,
+# build, test) on every non-draft PR and on push to main. CONTRIBUTING.md:
+# "If your local verify is green, CI will be green."
+name: Verify
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+    # Deliberately NOT triggered by `push`. Publishing the mirror IS a
+    # force-push of main, so a push trigger reran this whole build on every
+    # publish, to verify a tree that had already been built and tested
+    # before it was published. It verified nothing new and, on a private
+    # mirror, spent Actions quota to do it. A contributor's pull request is
+    # the only thing here that needs independent verification.
+
+permissions:
+    contents: read
+
+concurrency:
+    group: verify-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    verify:
+        if: github.event.pull_request.draft == false
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+            - name: Install dependencies
+              run: npm ci
+            - name: Verify (typecheck, lint, format, audit, build, test)
+              run: npm run verify

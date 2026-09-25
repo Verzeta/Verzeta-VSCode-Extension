@@ -1,0 +1,214 @@
+/* SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com> */
+/* SPDX-License-Identifier: LGPL-3.0-or-later */
+
+/*
+ * Three-tab shell styling (L23 + L21 + L27).
+ *
+ * Layout: header tab bar (auto-height) + flex-1 content area.
+ * Colours: VS Code's `tab` and `sideBar` theme tokens so the surface
+ * blends with the surrounding VS Code chrome — light, dark, HC, or
+ * any third-party theme.
+ *
+ * Responsive: the tab bar is `flex` with `min-width: 0` per child;
+ * labels truncate before the bar wraps. At < 320px sidebar widths
+ * the buttons drop their padding to keep all three visible without
+ * a horizontal scrollbar.
+ */
+
+/* ---------------------------------------------------------------- */
+/* App shell brand row (rendered once at the very top of the        */
+/* webview, above the TabBar). Pairs the Verzeta mark with the      */
+/* name; the TabBar sits directly below.                            */
+/* ---------------------------------------------------------------- */
+
+.verzeta-appheader {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--vscode-sideBar-background);
+    border-bottom: 1px solid var(--vscode-sideBar-border, transparent);
+}
+
+.verzeta-appheader__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    letter-spacing: 0.01em;
+}
+
+/* ---------------------------------------------------------------- */
+/* Per-tab page header. Each tab renders one of these directly      */
+/* below the TabBar so the user always lands on a consistent        */
+/* [Icon] [Title] heading with the same height, padding, and        */
+/* typography across Home / Chat / Settings.                        */
+/* ---------------------------------------------------------------- */
+
+.verzeta-tabheader {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--vscode-sideBar-border, transparent);
+}
+
+.verzeta-tabheader__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vscode-foreground);
+    opacity: 0.85;
+}
+
+.verzeta-tabheader__title {
+    flex: 1 1 auto;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    line-height: 1.2;
+}
+
+.verzeta-tabheader__trailing {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.verzeta-tabbar {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    background: var(--vscode-tab-inactiveBackground, var(--vscode-sideBar-background));
+    border-bottom: 1px solid var(--vscode-tab-border, var(--vscode-sideBar-border, transparent));
+    flex: 0 0 auto;
+}
+
+.verzeta-tab {
+    flex: 1 1 0;
+    min-width: 0;
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--vscode-tab-inactiveForeground, var(--vscode-foreground));
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 500;
+    padding: 8px 12px;
+    line-height: 1.2;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 2px solid transparent;
+    transition:
+        color 80ms ease,
+        border-color 80ms ease,
+        background-color 80ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.verzeta-tab__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+}
+
+.verzeta-tab__icon > svg {
+    width: 16px;
+    height: 16px;
+}
+
+.verzeta-tab--active .verzeta-tab__icon {
+    opacity: 1;
+}
+
+.verzeta-tab__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.verzeta-tab:hover {
+    color: var(--vscode-tab-hoverForeground, var(--vscode-foreground));
+    background: var(--vscode-tab-hoverBackground, transparent);
+}
+
+.verzeta-tab:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -2px;
+}
+
+.verzeta-tab--active {
+    color: var(--vscode-tab-activeForeground, var(--vscode-foreground));
+    background: var(--vscode-tab-activeBackground, var(--vscode-sideBar-background));
+    border-bottom-color: var(--vscode-focusBorder);
+    font-weight: 600;
+}
+
+.verzeta-tab-panel {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+}
+
+.verzeta-tab-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--vscode-descriptionForeground);
+    font-size: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.verzeta-tab-placeholder strong {
+    color: var(--vscode-foreground);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Mobile-responsive (L27). Below 320 px sidebar width VS Code
+ * still tries to render all three tabs in the bar — tighten the
+ * paddings so they all fit. */
+@media (max-width: 320px) {
+    .verzeta-tab {
+        padding: 6px 4px;
+        font-size: 11px;
+        gap: 4px;
+    }
+    .verzeta-tab__icon,
+    .verzeta-tab__icon > svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* Below ~220 px the labels overflow even with tight padding; hide
+ * the text and keep only the icon (still clearly identifies the
+ * tab via the shape). The active-tab underline keeps the selection
+ * signal even in icon-only mode. */
+@media (max-width: 220px) {
+    .verzeta-tab__label {
+        display: none;
+    }
+    .verzeta-tab {
+        padding: 8px 2px;
+    }
+}

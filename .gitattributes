@@ -1,0 +1,36 @@
+# Normalise line endings across platforms.
+* text=auto eol=lf
+
+# Explicit text files (cross-platform LF, never CRLF).
+*.ts        text eol=lf
+*.tsx       text eol=lf
+*.js        text eol=lf
+*.mjs       text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+*.toml      text eol=lf
+*.html      text eol=lf
+*.css       text eol=lf
+*.sh        text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+*.editorconfig text eol=lf
+*.npmrc     text eol=lf
+*.nvmrc     text eol=lf
+
+# Explicit binary files (no eol munging, no diff).
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.svg       text eol=lf
+*.woff      binary
+*.woff2     binary
+*.ttf       binary
+*.eot       binary
+*.vsix      binary
+*.zip       binary
+*.tar.gz    binary

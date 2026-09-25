@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# CodeRabbit configuration for the Verzeta VS Code extension (TypeScript /
+# esbuild / React webview). Tuned to the project's contribution standards.
+
+language: en-US
+early_access: false
+
+reviews:
+    profile: assertive
+    request_changes_workflow: true
+    high_level_summary: true
+    poem: false
+    review_status: true
+    auto_review:
+        enabled: true
+        drafts: false
+        base_branches:
+            - main
+    path_filters:
+        - '!dist/**'
+        - '!dist-tests/**'
+        - '!**/*.min.*'
+        - '!**/*.vsix'
+        - '!package-lock.json'
+    path_instructions:
+        - path: 'src/**/*.ts'
+          instructions: >-
+              Enforce the project standards. Every file needs the two-line SPDX header.
+              TypeScript is strict: flag any use of `any`, non-null assertions used to
+              silence the compiler, or `// eslint-disable` / `@ts-ignore` that bypasses
+              a rule instead of fixing the cause; the project forbids lowering rules in
+              eslint.config.mjs or .npmrc. Verify correct layering and single
+              responsibility. Every behavioural change needs a test (the repo uses the
+              Node native test runner).
+        - path: 'src/**/*.ts'
+          instructions: >-
+              Stability rules (the project's non-negotiables: flag any violation).
+              No unhandled promise rejections: every async path handles errors and, when
+              the operation can be cancelled or the view/panel disposed, cancellation.
+              Register every Disposable (event listeners, commands, webviews, sockets,
+              watchers) so nothing leaks on deactivate; no dangling timers/intervals. Do
+              not block the extension host on synchronous I/O. Handle every error path
+              explicitly: no empty catch blocks, no swallowed errors, no ignored
+              results. No hacks, shortcuts, TODO markers, or dead code may ship.
+        - path: 'src/shared/**/*.ts'
+          instructions: >-
+              This is the wire boundary to the desktop host. Flag any client-side op,
+              field, or message shape that the host wire-protocol does not serve: the
+              two must stay in sync. Validate all data crossing the socket; never trust
+              host payloads blindly.
+        - path: 'webview-ui/**/*.{ts,tsx}'
+          instructions: >-
+              React webview: no secrets or API keys in the webview bundle, respect the
+              VS Code webview CSP (no remote script/style/font), keep messages to the
+              extension host typed. Prefer accessible components. No em-dashes or
+              AI-slop copy in user-facing text.
+        - path: '**/*.md'
+          instructions: >-
+              No em-dashes, no AI-slop phrasing. Keep internal development context out
+              of files that ship publicly.
+
+    tools:
+        eslint:
+            enabled: true
+        github-checks:
+            enabled: true
+        markdownlint:
+            enabled: true
+
+chat:
+    auto_reply: true
+
+knowledge_base:
+    learnings:
+        scope: local

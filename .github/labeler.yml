@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# Path -> label rules for actions/labeler. Labels must exist (see labels.yml).
+
+'area: extension-host':
+    - changed-files:
+          - any-glob-to-any-file: ['src/extension/**']
+
+'area: webview':
+    - changed-files:
+          - any-glob-to-any-file: ['webview-ui/**']
+
+'area: wire':
+    - changed-files:
+          - any-glob-to-any-file: ['src/shared/**']
+
+'area: build-ci':
+    - changed-files:
+          - any-glob-to-any-file:
+                - '.github/**'
+                - '.gitea/**'
+                - 'esbuild.config.mjs'
+                - 'tsconfig*.json'
+                - 'eslint.config.mjs'
+                - 'package.json'
+
+'documentation':
+    - changed-files:
+          - any-glob-to-any-file:
+                - 'docs/**'
+                - 'Documentation/**'
+                - '**/*.md'

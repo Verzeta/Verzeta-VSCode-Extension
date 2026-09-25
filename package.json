@@ -1,0 +1,618 @@
+{
+    "name": "verzeta",
+    "displayName": "Verzeta",
+    "description": "Multi-agent project rooms inside VS Code. Connect to a paired Verzeta Studio host and chat with named-alias agent teams (@Coord, @Researcher, @Writer, @Critic) from the editor.",
+    "version": "1.0.0",
+    "publisher": "verzeta",
+    "license": "LGPL-3.0-or-later",
+    "private": true,
+    "engines": {
+        "vscode": "^1.95.0",
+        "node": ">=22.0.0",
+        "npm": ">=10.0.0"
+    },
+    "categories": [
+        "AI",
+        "Chat",
+        "Other"
+    ],
+    "keywords": [
+        "verzeta",
+        "ai",
+        "agents",
+        "multi-agent",
+        "chat"
+    ],
+    "main": "./dist/extension.js",
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "verzeta.addHost",
+                "title": "Add Host",
+                "category": "Verzeta",
+                "icon": "$(add)"
+            },
+            {
+                "command": "verzeta.removeHost",
+                "title": "Remove Host…",
+                "category": "Verzeta",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "verzeta.pair",
+                "title": "Pair…",
+                "category": "Verzeta",
+                "icon": "$(key)"
+            },
+            {
+                "command": "verzeta.newConversation",
+                "title": "New Conversation",
+                "category": "Verzeta",
+                "icon": "$(add)"
+            },
+            {
+                "command": "verzeta.sendSelectionToChat",
+                "title": "Send Selection to Chat",
+                "category": "Verzeta",
+                "icon": "$(send)"
+            },
+            {
+                "command": "verzeta.attachActiveFile",
+                "title": "Attach Active File to Chat",
+                "category": "Verzeta",
+                "icon": "$(file-add)"
+            },
+            {
+                "command": "verzeta.attachFile",
+                "title": "Add to Verzeta Chat",
+                "category": "Verzeta",
+                "icon": "$(file-add)"
+            },
+            {
+                "command": "verzeta.attachOpenFiles",
+                "title": "Attach Open Files to Chat…",
+                "category": "Verzeta",
+                "icon": "$(files)"
+            },
+            {
+                "command": "verzeta.applyEdit",
+                "title": "Apply Suggestion as Workspace Edit",
+                "category": "Verzeta",
+                "icon": "$(check)"
+            },
+            {
+                "command": "verzeta.openCanvasInEditor",
+                "title": "Open Canvas in Editor",
+                "category": "Verzeta",
+                "icon": "$(file-code)"
+            },
+            {
+                "command": "verzeta.registerWorkspaceMount",
+                "title": "Register Workspace Mount",
+                "category": "Verzeta",
+                "icon": "$(link)"
+            },
+            {
+                "command": "verzeta.unregisterWorkspaceMount",
+                "title": "Unregister Workspace Mount",
+                "category": "Verzeta",
+                "icon": "$(link-external)"
+            },
+            {
+                "command": "verzeta.refreshWorkspaceMount",
+                "title": "Refresh Workspace Mount Tree",
+                "category": "Verzeta",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "verzeta.changeWorkspaceMountTier",
+                "title": "Change Workspace Mount Permission Tier",
+                "category": "Verzeta",
+                "icon": "$(shield)"
+            },
+            {
+                "command": "verzeta.workspaceMountStatusBarMenu",
+                "title": "Workspace Mount Actions",
+                "category": "Verzeta",
+                "icon": "$(menu)"
+            },
+            {
+                "command": "verzeta.openInEditor",
+                "title": "Open Chat in Editor",
+                "category": "Verzeta",
+                "icon": "$(link-external)"
+            },
+            {
+                "command": "verzeta.addContext",
+                "title": "Add Context (Workspace Files) to Chat",
+                "category": "Verzeta",
+                "icon": "$(add)"
+            },
+            {
+                "command": "verzeta.attachUris",
+                "title": "Attach Dropped Files to Chat",
+                "category": "Verzeta"
+            },
+            {
+                "command": "verzeta.addGitDiff",
+                "title": "Add Git Diff to Chat",
+                "category": "Verzeta",
+                "icon": "$(git-compare)"
+            },
+            {
+                "command": "verzeta.generateCommitMessage",
+                "title": "Generate Commit Message",
+                "category": "Verzeta",
+                "icon": "$(sparkle)"
+            },
+            {
+                "command": "verzeta.editorAction",
+                "title": "Run Verzeta Editor Action",
+                "category": "Verzeta"
+            },
+            {
+                "command": "verzeta.askAgent",
+                "title": "Ask an Agent About This…",
+                "category": "Verzeta",
+                "icon": "$(comment-discussion)"
+            },
+            {
+                "command": "verzeta.sendTerminalCommand",
+                "title": "Send Last Terminal Command to Chat",
+                "category": "Verzeta",
+                "icon": "$(terminal)"
+            }
+        ],
+        "submenus": [
+            {
+                "id": "verzeta.editorContext",
+                "label": "Verzeta",
+                "icon": "$(comment-discussion)"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "verzeta.openInEditor",
+                    "when": "view == verzeta.sidebarView || view == verzeta.sidebarSecondaryView",
+                    "group": "navigation@1"
+                }
+            ],
+            "terminal/context": [
+                {
+                    "command": "verzeta.sendTerminalCommand",
+                    "group": "verzeta@1"
+                }
+            ],
+            "scm/title": [
+                {
+                    "command": "verzeta.generateCommitMessage",
+                    "when": "scmProvider == git",
+                    "group": "navigation@8"
+                },
+                {
+                    "command": "verzeta.addGitDiff",
+                    "when": "scmProvider == git",
+                    "group": "navigation@9"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "verzeta.applyEdit",
+                    "when": "false"
+                },
+                {
+                    "command": "verzeta.attachFile",
+                    "when": "false"
+                },
+                {
+                    "command": "verzeta.openCanvasInEditor",
+                    "when": "false"
+                },
+                {
+                    "command": "verzeta.workspaceMountStatusBarMenu",
+                    "when": "false"
+                },
+                {
+                    "command": "verzeta.attachUris",
+                    "when": "false"
+                },
+                {
+                    "command": "verzeta.editorAction",
+                    "when": "false"
+                }
+            ],
+            "editor/context": [
+                {
+                    "submenu": "verzeta.editorContext",
+                    "when": "editorFocus && !inDebugRepl",
+                    "group": "verzeta@1"
+                }
+            ],
+            "verzeta.editorContext": [
+                {
+                    "command": "verzeta.askAgent",
+                    "when": "editorHasSelection",
+                    "group": "1_chat@0"
+                },
+                {
+                    "command": "verzeta.sendSelectionToChat",
+                    "when": "editorHasSelection",
+                    "group": "1_chat@1"
+                },
+                {
+                    "command": "verzeta.attachActiveFile",
+                    "group": "1_chat@2"
+                },
+                {
+                    "command": "verzeta.attachOpenFiles",
+                    "group": "1_chat@3"
+                },
+                {
+                    "command": "verzeta.addContext",
+                    "group": "1_chat@4"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "verzeta.attachActiveFile",
+                    "group": "verzeta@1"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "verzeta.attachFile",
+                    "when": "resourceScheme == file && !explorerResourceIsFolder",
+                    "group": "verzeta@1"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Verzeta",
+            "properties": {
+                "verzeta.hosts": {
+                    "type": "array",
+                    "default": [],
+                    "markdownDescription": "Paired Verzeta Studio hosts. Manage via the **Verzeta: Add Host** / **Verzeta: Remove Host** commands; editing this array directly is discouraged.",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "id",
+                            "name",
+                            "url"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "Locally generated host identifier."
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "User-chosen display name."
+                            },
+                            "url": {
+                                "type": "string",
+                                "format": "uri",
+                                "description": "WebSocket URL (ws:// or wss://)."
+                            },
+                            "tlsCertSha256": {
+                                "type": "string",
+                                "description": "Pinned TLS certificate SHA-256 fingerprint (optional for wss://; leave empty to use system CA trust)."
+                            }
+                        }
+                    }
+                },
+                "verzeta.defaultHostId": {
+                    "type": "string",
+                    "default": "",
+                    "markdownDescription": "ID of the host used when no other host is explicitly selected. Defaults to the first paired host."
+                },
+                "verzeta.connectOnStartup": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Connect to the default host automatically when VS Code starts."
+                },
+                "verzeta.reconnect.backoffMs": {
+                    "type": "number",
+                    "default": 1000,
+                    "minimum": 250,
+                    "maximum": 60000,
+                    "description": "Delay (milliseconds) before the one automatic reconnect attempt after a dropped connection. If that attempt fails, the host shows as disconnected until you click Connect."
+                },
+                "verzeta.log.level": {
+                    "type": "string",
+                    "enum": [
+                        "error",
+                        "warn",
+                        "info",
+                        "debug"
+                    ],
+                    "default": "info",
+                    "description": "Verbosity of the Verzeta output channel."
+                },
+                "verzeta.initialTab": {
+                    "type": "string",
+                    "enum": [
+                        "home",
+                        "chat",
+                        "settings"
+                    ],
+                    "default": "home",
+                    "description": "Which tab the Verzeta sidebar opens on by default."
+                },
+                "verzeta.codeLens.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show Verzeta CodeLens actions (Explain / Add tests / Refactor) above functions and classes. Off by default to avoid editor clutter."
+                },
+                "verzeta.workspaceMount.autoRegister": {
+                    "scope": "machine",
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Share the workspace automatically when you send the first message in a project room that has no workspace mount, if exactly one workspace folder is open. The default permission tier applies. When off, or when these conditions are not met, Verzeta offers to share instead. \"Never for this workspace\" on that offer also stops automatic sharing."
+                },
+                "verzeta.workspaceMount.defaultTier": {
+                    "scope": "machine",
+                    "type": "string",
+                    "enum": [
+                        "ask",
+                        "smart"
+                    ],
+                    "default": "ask",
+                    "markdownDescription": "Permission tier for automatic and one-click workspace sharing, and the tier pre-selected in the registration picker. **`bypass` cannot be set as a default:** any value other than `smart` is treated as `ask`. Choose bypass in the picker each time, so accepting the risk is always deliberate. Set this in user settings; workspace settings cannot change it."
+                },
+                "verzeta.workspaceMount.blocklist": {
+                    "scope": "machine",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "markdownDescription": "Additional path globs that agents may not list, read or write, on top of the bundled defaults. Defaults block credentials, keys, dot-env files, `node_modules`, `dist`, and the rest of the bundled blocklist. **Defaults cannot be removed.** These globs are additions only."
+                },
+                "verzeta.workspaceMount.allowlist": {
+                    "scope": "machine",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "markdownDescription": "When non-empty, agents can only list, read and write paths that match one of these globs (for example `src/**`, `docs/**`). Empty (the default) means every path that is not blocklisted is accessible."
+                },
+                "verzeta.workspaceMount.smartMode.extensionAllowlist": {
+                    "scope": "machine",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mjs",
+                        ".cjs",
+                        ".py",
+                        ".pyi",
+                        ".rs",
+                        ".go",
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".swift",
+                        ".m",
+                        ".mm",
+                        ".rb",
+                        ".php",
+                        ".lua",
+                        ".pl",
+                        ".pm",
+                        ".sh",
+                        ".bash",
+                        ".zsh",
+                        ".fish",
+                        ".ps1",
+                        ".c",
+                        ".h",
+                        ".cpp",
+                        ".cxx",
+                        ".cc",
+                        ".hpp",
+                        ".hxx",
+                        ".cppm",
+                        ".cs",
+                        ".csx",
+                        ".vb",
+                        ".fs",
+                        ".fsx",
+                        ".fsi",
+                        ".scala",
+                        ".sbt",
+                        ".clj",
+                        ".cljs",
+                        ".cljc",
+                        ".edn",
+                        ".ex",
+                        ".exs",
+                        ".erl",
+                        ".hrl",
+                        ".ml",
+                        ".mli",
+                        ".hs",
+                        ".lhs",
+                        ".dart",
+                        ".zig",
+                        ".nim",
+                        ".cr",
+                        ".jl",
+                        ".r",
+                        ".R",
+                        ".html",
+                        ".htm",
+                        ".css",
+                        ".scss",
+                        ".sass",
+                        ".less",
+                        ".styl",
+                        ".vue",
+                        ".svelte",
+                        ".astro",
+                        ".qml",
+                        ".qmldir",
+                        ".ui",
+                        ".md",
+                        ".mdx",
+                        ".rst",
+                        ".adoc",
+                        ".txt",
+                        ".json",
+                        ".jsonc",
+                        ".json5",
+                        ".yaml",
+                        ".yml",
+                        ".toml",
+                        ".ini",
+                        ".cfg",
+                        ".conf",
+                        ".properties",
+                        ".env.example",
+                        ".env.sample",
+                        ".xml",
+                        ".xsd",
+                        ".xsl",
+                        ".xslt",
+                        ".sql",
+                        ".psql",
+                        ".pgsql",
+                        ".dockerfile",
+                        ".nginx",
+                        ".gitignore",
+                        ".gitattributes",
+                        ".editorconfig",
+                        ".prettierrc",
+                        ".eslintrc",
+                        ".csv",
+                        ".tsv",
+                        ".feature",
+                        ".proto",
+                        ".graphql",
+                        ".gql",
+                        ".thrift",
+                        ".tf",
+                        ".tfvars",
+                        ".hcl",
+                        ".bicep",
+                        ".arm",
+                        ".cmake",
+                        ".make",
+                        ".mk",
+                        ".gradle",
+                        ".bzl"
+                    ],
+                    "markdownDescription": "File extensions whose writes Smart Mode auto-approves. Any extension not on this list falls back to `ask`, even in the `smart` tier."
+                },
+                "verzeta.workspaceMount.smartMode.maxDiffLines": {
+                    "scope": "machine",
+                    "type": "number",
+                    "default": 500,
+                    "minimum": 10,
+                    "maximum": 100000,
+                    "description": "Smart Mode escalates a write to `ask` when its diff changes more than this many lines."
+                },
+                "verzeta.workspaceMount.smartMode.maxFileBytes": {
+                    "scope": "machine",
+                    "type": "number",
+                    "default": 262144,
+                    "minimum": 1024,
+                    "maximum": 10485760,
+                    "description": "Smart Mode escalates a write to `ask` when the proposed content exceeds this many bytes (default 256 KiB)."
+                }
+            }
+        },
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "verzeta",
+                    "title": "Verzeta",
+                    "icon": "$(comment-discussion)"
+                }
+            ],
+            "secondarySidebar": [
+                {
+                    "id": "verzetaSecondary",
+                    "title": "Verzeta",
+                    "icon": "$(comment-discussion)",
+                    "when": "!verzeta:doesNotSupportSecondarySidebar"
+                }
+            ]
+        },
+        "views": {
+            "verzeta": [
+                {
+                    "id": "verzeta.sidebarView",
+                    "type": "webview",
+                    "name": "Verzeta",
+                    "contextualTitle": "Verzeta",
+                    "icon": "$(comment-discussion)"
+                }
+            ],
+            "verzetaSecondary": [
+                {
+                    "id": "verzeta.sidebarSecondaryView",
+                    "type": "webview",
+                    "name": "Verzeta",
+                    "contextualTitle": "Verzeta",
+                    "icon": "$(comment-discussion)",
+                    "when": "!verzeta:doesNotSupportSecondarySidebar"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit && tsc -p webview-ui --noEmit",
+        "lint": "eslint src tests webview-ui",
+        "format": "prettier --check .",
+        "format:fix": "prettier --write .",
+        "build": "node esbuild.config.mjs",
+        "build:prod": "node esbuild.config.mjs --production",
+        "build:extension": "node esbuild.config.mjs --extension",
+        "build:webview": "node esbuild.config.mjs --webview",
+        "watch": "node esbuild.config.mjs --watch",
+        "build:tests": "tsc -p tsconfig.tests.json",
+        "test": "npm run build:tests && node --test --test-reporter=spec 'dist-tests/tests/**/*.test.js'",
+        "audit": "npm audit --audit-level=moderate",
+        "audit:signatures": "npm audit signatures",
+        "verify": "npm run typecheck && npm run lint && npm run format && npm run audit && npm run audit:signatures && npm run build && npm run test",
+        "vscode:prepublish": "npm run build:prod",
+        "package": "vsce package --no-dependencies"
+    },
+    "dependencies": {
+        "undici": "8.10.2"
+    },
+    "devDependencies": {
+        "@eslint/js": "10.0.1",
+        "@preact/signals": "2.9.1",
+        "@types/node": "22.10.0",
+        "@types/vscode": "1.95.0",
+        "@typescript-eslint/eslint-plugin": "8.60.1",
+        "@typescript-eslint/parser": "8.60.1",
+        "esbuild": "0.28.1",
+        "eslint": "10.4.1",
+        "preact": "10.29.2",
+        "prettier": "3.8.3",
+        "shiki": "4.1.0",
+        "typescript": "6.0.3"
+    },
+    "icon": "resources/icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Verzeta/Verzeta-VSCode-Extension.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Verzeta/Verzeta-VSCode-Extension/issues"
+    },
+    "homepage": "https://verzeta.com"
+}

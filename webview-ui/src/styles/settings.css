@@ -1,0 +1,461 @@
+/* SPDX-FileCopyrightText: 2026 Aditya Mehra <aix.m@outlook.com> */
+/* SPDX-License-Identifier: LGPL-3.0-or-later */
+
+/*
+ * Settings tab styling (L21 + L26 + L27). Layout mirrors Android
+ * SettingsScreen: ALL-CAPS section labels grouping stacks of nav
+ * rows. Each row is a 28 px circular icon on the left + a body
+ * column on the right. Inside the body, a header row holds the
+ * title and any trailing count / drill chevron / action buttons
+ * (Connect / Remove / Revoke), and a subtitle paragraph flows
+ * full-width beneath it. This pin keeps actions and chevrons
+ * vertically aligned with the title — they NEVER fall below the
+ * subtitle on narrow sidebars (which is the bug the previous
+ * container-query layout produced).
+ *
+ * VS Code theme variables for every surface; Verzeta brand orange
+ * (#CD6700) appears on the active state dot, danger hover, and a
+ * couple of accent surfaces.
+ */
+
+.verzeta-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 8px 10px 24px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* `verzeta-settings__topbar` + `verzeta-settings__title` rules
+ * were dropped — Settings now uses the shared TabHeader from
+ * AppShellHeader (the same one Home / Chat render) for
+ * consistency. The refresh icon is passed as `trailing`. */
+
+.verzeta-iconbtn {
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--vscode-foreground);
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.verzeta-iconbtn:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+}
+.verzeta-iconbtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+/* -------------------------------------------------------------- */
+/* Section + label                                                */
+/* -------------------------------------------------------------- */
+
+.verzeta-settings__section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.verzeta-settings__label {
+    margin: 0;
+    padding: 0 4px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+}
+
+.verzeta-settings__rows {
+    display: flex;
+    flex-direction: column;
+    /* No background, no padding — let the rows breathe but read as a
+       group via the ALL-CAPS label above. The previous "card with
+       background" look made everything feel boxed and oversized. */
+}
+
+/* -------------------------------------------------------------- */
+/* NavRow — the universal Settings row shape                      */
+/* -------------------------------------------------------------- */
+
+.verzeta-navrow {
+    appearance: none;
+    background: transparent;
+    border: none;
+    text-align: left;
+    color: var(--vscode-foreground);
+    font-family: inherit;
+    font-size: var(--vscode-font-size);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 6px;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.verzeta-navrow--interactive {
+    cursor: pointer;
+}
+.verzeta-navrow--interactive:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+.verzeta-navrow--interactive:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.verzeta-navrow--disabled {
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+.verzeta-navrow--disabled:hover {
+    background: transparent;
+}
+
+.verzeta-navrow--danger.verzeta-navrow--interactive:hover {
+    background: rgba(211, 51, 51, 0.08);
+}
+
+.verzeta-navrow__icon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vscode-foreground);
+    /* Nudge down so the icon visually centers on the title text
+       (the body's first line) rather than on the row's top edge —
+       row uses align-items: flex-start so the body grows below
+       without dragging the icon along. */
+    margin-top: -2px;
+}
+
+.verzeta-navrow--danger .verzeta-navrow__icon {
+    color: var(--vscode-errorForeground, #d33);
+}
+
+.verzeta-navrow__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* The header row sits at the top of the body — title on the left
+   and any trailing count / chevron / action buttons on the right.
+   Keeping them in the same row guarantees actions NEVER end up
+   below the subtitle. Wraps internally when title + actions don't
+   fit (rare on narrow sidebars); margin-left: auto on actions then
+   right-aligns the wrapped second line. */
+.verzeta-navrow__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
+    row-gap: 4px;
+}
+
+.verzeta-navrow__title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.verzeta-navrow__subtitle {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    line-height: 1.4;
+    /* Long URLs and tokens break inside the word so the row doesn't
+       blow out horizontally. */
+    overflow-wrap: anywhere;
+}
+
+/* Interactive rows clamp the subtitle to 2 lines so an oversized
+   wrapped URL doesn't make every host row 4 lines tall. Static info
+   rows (the "What is this?" explainer) keep the full text so the
+   user can actually read what they're told. */
+.verzeta-navrow--interactive .verzeta-navrow__subtitle {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.verzeta-navrow__trailing {
+    flex: 0 0 auto;
+    color: var(--vscode-descriptionForeground);
+    font-size: 11px;
+    margin-left: auto;
+}
+
+.verzeta-navrow__chevron {
+    flex: 0 0 auto;
+    color: var(--vscode-descriptionForeground);
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* margin-left: auto pushes the actions group to the right of the
+   header row. When title + actions overflow the body width, the
+   header wraps; the actions then sit on their own row, still
+   right-aligned. */
+.verzeta-navrow__actions {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+/* When trailing AND chevron coexist (count + drill arrow), the
+   chevron already follows trailing — drop trailing's auto margin so
+   the pair sticks together on the right. */
+.verzeta-navrow__trailing + .verzeta-navrow__chevron {
+    margin-left: 4px;
+}
+
+.verzeta-settings__trailingCount {
+    font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------- */
+/* Text-button (Connect / Revoke / Remove)                        */
+/* -------------------------------------------------------------- */
+
+.verzeta-textbtn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--vscode-textLink-foreground, var(--vscode-focusBorder, #cd6700));
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.verzeta-textbtn:hover {
+    background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
+    text-decoration: underline;
+}
+.verzeta-textbtn:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+.verzeta-textbtn:disabled {
+    color: var(--vscode-disabledForeground);
+    cursor: default;
+}
+
+.verzeta-textbtn--danger {
+    color: var(--vscode-errorForeground, #d33);
+}
+
+/* -------------------------------------------------------------- */
+/* Connection state dot (next to host name)                       */
+/* -------------------------------------------------------------- */
+
+.verzeta-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: 0 0 auto;
+    background: var(--vscode-descriptionForeground);
+}
+.verzeta-dot--connected {
+    background: #2ea043;
+    box-shadow: 0 0 0 2px rgba(46, 160, 67, 0.18);
+}
+.verzeta-dot--connecting,
+.verzeta-dot--authenticating,
+.verzeta-dot--reconnecting {
+    background: #cca700;
+}
+.verzeta-dot--unauthorized,
+.verzeta-dot--error {
+    background: var(--vscode-errorForeground, #d33);
+}
+
+/* -------------------------------------------------------------- */
+/* Sub-list rows (collapsible Tools / MCP / Skills inside catalog) */
+/* -------------------------------------------------------------- */
+
+.verzeta-settings__sublist {
+    list-style: none;
+    margin: 4px 0 8px 44px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.verzeta-settings__sublistRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: var(--vscode-list-hoverBackground);
+}
+
+.verzeta-settings__sublistInfo {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.verzeta-settings__sublistTitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.verzeta-settings__sublistSubtitle {
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-settings__skillTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.verzeta-settings__skillTag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+}
+
+.verzeta-settings__empty {
+    margin: 0;
+    padding: 6px 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--vscode-descriptionForeground);
+}
+
+.verzeta-settings__error {
+    color: var(--vscode-errorForeground, #d33);
+}
+
+/* -------------------------------------------------------------- */
+/* Pills + tags (preserved from previous Settings)                */
+/* -------------------------------------------------------------- */
+
+.verzeta-settings__tag {
+    font-size: 10px;
+    color: var(--vscode-descriptionForeground);
+    background: var(--vscode-badge-background);
+    padding: 1px 6px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.verzeta-settings__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+}
+
+.verzeta-settings__pill--connected {
+    background: #2ea043;
+    color: #ffffff;
+}
+.verzeta-settings__pill--disconnected {
+    background: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+}
+.verzeta-settings__pill--built_in {
+    background: var(--vscode-charts-blue, var(--vscode-badge-background));
+    color: var(--vscode-button-foreground);
+}
+.verzeta-settings__pill--custom {
+    background: rgba(205, 103, 0, 0.32);
+    color: var(--vscode-foreground);
+}
+.verzeta-settings__pill--mcp {
+    background: var(--vscode-charts-purple, var(--vscode-badge-background));
+    color: var(--vscode-button-foreground);
+}
+
+/* -------------------------------------------------------------- */
+/* About sub-card                                                 */
+/* -------------------------------------------------------------- */
+
+.verzeta-settings__about {
+    margin: 0 0 0 44px;
+    padding: 8px 12px;
+    background: var(
+        --vscode-editor-inactiveSelectionBackground,
+        var(--vscode-list-hoverBackground)
+    );
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--vscode-foreground);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.verzeta-settings__about p {
+    margin: 0;
+}
+.verzeta-settings__about code {
+    font-family: var(--vscode-editor-font-family, monospace);
+    background: var(--vscode-textCodeBlock-background, var(--vscode-textBlockQuote-background));
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.92em;
+}
+.verzeta-settings__detail {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
