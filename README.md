@@ -108,9 +108,18 @@ See [Install and pair](docs/User/01-install-and-pair.md) for details and
 - **All your conversations.** Direct chats, group chats and project
   rooms from the paired host are listed in the Chat tab.
 
-![Project rooms on the paired host, with templates for starting a new one](assets/screenshots/project-rooms.png)
-
 <!-- GIF: a group room where @Coord delegates and two agents reply, attributed inline. -->
+
+### Project rooms
+
+The **Project Rooms** card on the Home tab opens your rooms and a set of
+templates. Click **New project**, or **Quick Start** on a template, to set
+the name, scenario, goal and team, including each member's provider,
+model and tools. When the room is created, Verzeta offers to start a
+group chat with the team or a 1:1 chat with each member. See
+[Projects and rooms](docs/User/04-projects-and-rooms.md).
+
+![Project rooms on the paired host, with templates for starting a new one](assets/screenshots/project-rooms.png)
 
 ### Where the chat can live
 
