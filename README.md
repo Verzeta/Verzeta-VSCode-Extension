@@ -34,13 +34,7 @@ on the desktop. The extension connects only to hosts you pair it with.
 There is no Verzeta cloud, no telemetry, and the extension never calls a
 model provider itself.
 
-<!--
-  SCREENSHOT: hero shot of the Verzeta sidebar open next to code, a
-  group room mid-conversation with two agents replying. Drop the image
-  in media/ and reference it with the absolute raw URL of the public
-  repo, e.g.
-  ![Verzeta in VS Code](https://raw.githubusercontent.com/Verzeta/Verzeta-VSCode-Extension/main/media/hero.png)
--->
+![A Verzeta group chat in the side bar, next to the Python file the agents are discussing](assets/screenshots/chat.png)
 
 Verzeta has two clients: this extension and
 [Verzeta for Android](https://github.com/Verzeta/Verzeta-Android). Both
@@ -93,7 +87,7 @@ code --install-extension verzeta.verzeta
 See [Install and pair](docs/User/01-install-and-pair.md) for details and
 [Troubleshooting](docs/User/09-troubleshooting.md) if pairing fails.
 
-<!-- SCREENSHOT / GIF: the pairing flow (Add Host -> pair code -> connected). -->
+![The Verzeta home tab connected to a host, with recent chats](assets/screenshots/home.png)
 
 ---
 
@@ -113,6 +107,8 @@ See [Install and pair](docs/User/01-install-and-pair.md) for details and
   collapsed **Reasoning** section above the reply.
 - **All your conversations.** Direct chats, group chats and project
   rooms from the paired host are listed in the Chat tab.
+
+![Project rooms on the paired host, with templates for starting a new one](assets/screenshots/project-rooms.png)
 
 <!-- GIF: a group room where @Coord delegates and two agents reply, attributed inline. -->
 
