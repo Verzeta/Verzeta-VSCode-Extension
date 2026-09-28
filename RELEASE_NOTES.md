@@ -9,6 +9,13 @@ Public release notes for Verzeta for VS Code. The release workflow publishes the
 section whose heading matches the release version (`## [X.Y.Z]`) as the GitHub
 release body. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.0.1] - 2026-09-28
+
+### Changed
+
+- The Marketplace page shows screenshots of the extension.
+- The extension package no longer includes the repository's GitHub and review configuration files.
+
 ## [1.0.0] - 2026-07-10
 
 The first public release of Verzeta for VS Code. It brings the agent teams on your Verzeta Studio host into VS Code.

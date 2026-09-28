@@ -2,7 +2,7 @@
     "name": "verzeta",
     "displayName": "Verzeta",
     "description": "Multi-agent project rooms inside VS Code. Connect to a paired Verzeta Studio host and chat with named-alias agent teams (@Coord, @Researcher, @Writer, @Critic) from the editor.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "verzeta",
     "license": "LGPL-3.0-or-later",
     "private": true,
